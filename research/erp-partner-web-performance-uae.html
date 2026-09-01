@@ -1,0 +1,536 @@
+<title>Gulf ERP Partner Scorecard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+  :root{
+    --paper:#eef2f3;
+    --surface:#ffffff;
+    --surface-2:#f6f9f9;
+    --ink:#101619;
+    --ink-2:#3d4c50;
+    --ink-3:#6a7b7e;
+    --rule:#d2dcde;
+    --rule-soft:#e3eaeb;
+    --accent:#0f6f6a;
+    --accent-soft:#dceceb;
+    --good:#17795e;
+    --warn:#8a6614;
+    --bad:#a8442a;
+    --bad-soft:#f6e4de;
+    --shadow:0 1px 2px rgba(16,22,25,.05),0 8px 24px -16px rgba(16,22,25,.18);
+    --display:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+    --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#0c1214;
+      --surface:#141d20;
+      --surface-2:#182327;
+      --ink:#e8eff0;
+      --ink-2:#b0c0c2;
+      --ink-3:#7e9093;
+      --rule:#27363a;
+      --rule-soft:#1e2b2e;
+      --accent:#57b8ae;
+      --accent-soft:#16302f;
+      --good:#4fbb95;
+      --warn:#c9a041;
+      --bad:#e08a6d;
+      --bad-soft:#33201a;
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0c1214;
+    --surface:#141d20;
+    --surface-2:#182327;
+    --ink:#e8eff0;
+    --ink-2:#b0c0c2;
+    --ink-3:#7e9093;
+    --rule:#27363a;
+    --rule-soft:#1e2b2e;
+    --accent:#57b8ae;
+    --accent-soft:#16302f;
+    --good:#4fbb95;
+    --warn:#c9a041;
+    --bad:#e08a6d;
+    --bad-soft:#33201a;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.7);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--body);
+    font-size:17px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1140px;margin:0 auto;padding:0 28px 96px}
+  .col{max-width:68ch}
+  h1,h2,h3,h4{font-family:var(--display);text-wrap:balance;line-height:1.15;margin:0}
+  p{margin:0}
+  a{color:var(--accent)}
+
+  .eyebrow{
+    font-family:var(--mono);font-size:11px;font-weight:500;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);
+  }
+
+  /* ---------- masthead ---------- */
+  header.mast{border-bottom:2px solid var(--ink);padding:52px 0 24px;display:flex;flex-direction:column;gap:20px}
+  .mast-top{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+  .badge{
+    font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;
+    padding:5px 10px;border:1px solid var(--rule);border-radius:2px;color:var(--ink-2);background:var(--surface);
+  }
+  .badge.region{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+  h1{font-size:clamp(38px,6.2vw,66px);font-weight:700;letter-spacing:-.028em}
+  .standfirst{font-size:20px;color:var(--ink-2);max-width:60ch}
+
+  /* ---------- sections ---------- */
+  section{padding-top:64px}
+  .sec-head{display:flex;flex-direction:column;gap:10px;margin-bottom:26px}
+  h2{font-size:clamp(25px,3.2vw,34px);font-weight:600;letter-spacing:-.02em}
+  h3{font-size:21px;font-weight:600;letter-spacing:-.012em}
+  .lede{color:var(--ink-2);margin-top:14px}
+  .stack{display:flex;flex-direction:column;gap:16px}
+
+  /* ---------- caution panel ---------- */
+  .caution{
+    background:var(--surface);border:1px solid var(--rule);
+    border-left:3px solid var(--bad);border-radius:3px;
+    padding:26px 28px;display:flex;flex-direction:column;gap:16px;box-shadow:var(--shadow);
+  }
+  .caution h3{color:var(--bad)}
+  .caution ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:10px;color:var(--ink-2)}
+
+  /* ---------- method grid ---------- */
+  .method{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:3px;overflow:hidden}
+  .method div{background:var(--surface);padding:20px}
+  .method h4{font-size:14px;font-weight:600;margin-bottom:8px}
+  .method p{font-size:14.5px;color:var(--ink-2);line-height:1.5}
+  .wt{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.08em;display:block;margin-bottom:10px}
+
+  /* ---------- table ---------- */
+  .scroller{overflow-x:auto;border:1px solid var(--rule);border-radius:3px;background:var(--surface);box-shadow:var(--shadow)}
+  table{border-collapse:collapse;width:100%;min-width:920px;font-family:var(--display)}
+  thead th{
+    font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--ink-3);text-align:left;padding:14px 14px;border-bottom:1px solid var(--rule);vertical-align:bottom;
+  }
+  thead th.num{text-align:right}
+  tbody td{padding:15px 14px;border-bottom:1px solid var(--rule-soft);font-size:15px;vertical-align:middle}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr.band td{background:var(--surface-2);padding:8px 14px}
+  .bandlabel{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3)}
+  .rank{font-family:var(--mono);font-weight:600;font-size:15px;color:var(--ink-3);width:44px}
+  .rank.top{color:var(--accent)}
+  .rank.bot{color:var(--bad)}
+  .co{font-weight:600;display:block;letter-spacing:-.01em}
+  .dom{font-family:var(--mono);font-size:11.5px;color:var(--ink-3)}
+  td.num{text-align:right;font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums;color:var(--ink-2)}
+  td.total{text-align:right;font-family:var(--mono);font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
+  .eco{font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--ink-2);white-space:nowrap}
+  .bar{height:4px;border-radius:2px;background:var(--rule-soft);margin-top:6px;overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:2px}
+  .bar i.g{background:var(--accent)}
+  .bar i.r{background:var(--bad)}
+
+  /* ---------- profiles ---------- */
+  .profiles{display:flex;flex-direction:column;gap:20px}
+  .card{
+    background:var(--surface);border:1px solid var(--rule);border-radius:3px;
+    padding:28px 30px;display:flex;flex-direction:column;gap:18px;box-shadow:var(--shadow);
+  }
+  .card.neg{border-left:3px solid var(--bad)}
+  .card.pos{border-left:3px solid var(--accent)}
+  .card-head{display:flex;flex-wrap:wrap;gap:14px;align-items:baseline;justify-content:space-between}
+  .card-id{display:flex;gap:14px;align-items:baseline}
+  .bignum{font-family:var(--mono);font-size:30px;font-weight:600;line-height:1;color:var(--accent)}
+  .bignum.b{color:var(--bad)}
+  .score-tag{font-family:var(--mono);font-size:12px;color:var(--ink-3);white-space:nowrap}
+  .card h3 + .dom{margin-top:3px}
+  .whatwork{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:9px;display:block}
+  .card ul{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:11px;color:var(--ink-2);font-size:16px}
+  .card ul b{color:var(--ink);font-weight:600;font-family:var(--display);font-size:15px}
+  .evidence{
+    font-family:var(--mono);font-size:12px;color:var(--ink-2);
+    background:var(--surface-2);border:1px solid var(--rule-soft);border-radius:2px;
+    padding:12px 14px;line-height:1.55;
+  }
+  .evidence b{color:var(--ink);font-weight:600}
+
+  /* ---------- playbook ---------- */
+  .plays{display:flex;flex-direction:column;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:3px;overflow:hidden}
+  .play{background:var(--surface);padding:24px 26px;display:grid;grid-template-columns:52px 1fr;gap:20px;align-items:start}
+  .play-n{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent);padding-top:4px;letter-spacing:.06em}
+  .play h4{font-size:18px;font-weight:600;margin-bottom:9px;letter-spacing:-.012em}
+  .play p{color:var(--ink-2);font-size:16px}
+  .mech{margin-top:11px;font-family:var(--mono);font-size:12px;color:var(--ink-3);line-height:1.55}
+  .mech b{color:var(--accent);font-weight:500}
+
+  /* ---------- gaps ---------- */
+  .gaps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+  .gap{background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:20px 22px}
+  .gap h4{font-size:15px;font-weight:600;margin-bottom:8px}
+  .gap p{font-size:14.5px;color:var(--ink-2);line-height:1.55}
+
+  footer{margin-top:72px;padding-top:24px;border-top:1px solid var(--rule);color:var(--ink-3);font-size:13.5px;font-family:var(--display)}
+  footer p + p{margin-top:8px}
+
+  @media (max-width:640px){
+    body{font-size:16px}
+    .wrap{padding:0 18px 72px}
+    .play{grid-template-columns:1fr;gap:8px}
+    .card{padding:22px}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    a{transition:opacity .15s ease}
+  }
+  a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+</style>
+
+<div class="wrap">
+
+<header class="mast">
+  <div class="mast-top">
+    <span class="badge region">United Arab Emirates</span>
+    <span class="badge">Dynamics · Oracle · SAP</span>
+    <span class="badge">Search-visibility study</span>
+    <span class="badge">1 Sep 2026</span>
+  </div>
+  <h1>Gulf ERP Partner Scorecard</h1>
+  <p class="standfirst">Which UAE ERP implementation partners are winning the web — and what the leaders do differently on the pages that turn a search into a sales conversation.</p>
+</header>
+
+<section>
+  <div class="sec-head col">
+    <span class="eyebrow">Read this before the table</span>
+    <h2>What this measures, and what it can't</h2>
+  </div>
+  <div class="col stack">
+    <div class="caution">
+      <h3>Two honest limits</h3>
+      <ul>
+        <li><b>Click-through and conversion rates are not public for any of these firms.</b> They live in private Google Analytics and Search Console accounts. No study — this one included — can report real CTR or conversion figures for a competitor. Where this page discusses conversion, it analyses <em>conversion architecture</em>: the observable page structures that are known to drive enquiries. That is inference from design, not measurement of outcomes.</li>
+        <li><b>This session's network policy blocked direct access to every partner website.</b> I could not load a single page, run PageSpeed, or inspect a form. Every finding below is drawn from what search engines return: which domains rank for which commercial queries, page titles, URL structures, and indexed snippets. That is a genuine and useful signal — it is how buyers actually find these firms — but it is not a site audit.</li>
+      </ul>
+    </div>
+    <p class="lede">So read the ranking below as what it is: a <b>share-of-search league table</b> for high-intent UAE ERP queries, with conversion tactics inferred from page architecture. It reliably identifies who is capturing demand. It does not certify who closes it.</p>
+    <p class="lede">One more fairness note that matters: this scores <em>web marketing</em>, not delivery quality. A firm can run excellent implementations and a poor website. At least one company in the bottom three appears to be exactly that.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head col">
+    <span class="eyebrow">Method</span>
+    <h2>How the scores were built</h2>
+    <p class="lede">Twelve high-intent UAE buying queries were run — spanning head terms ("ERP implementation partner Dubai"), product terms ("SAP Business One partner Dubai", "Business Central partner Dubai pricing"), vertical terms ("ERP for construction UAE"), decision terms ("SAP vs Oracle vs Dynamics UAE"), and cost terms ("ERP implementation cost UAE"). Domains were scored on where and how often they surfaced.</p>
+  </div>
+  <div class="method">
+    <div><span class="wt">30 points</span><h4>Search visibility</h4><p>Distinct high-intent queries the domain surfaced for, and its position among them. The closest available proxy for organic traffic.</p></div>
+    <div><span class="wt">25 points</span><h4>Content strategy</h4><p>Whether the site publishes demand-capturing assets — comparison tables, partner directories, cost guides, regulatory explainers — or only service brochures.</p></div>
+    <div><span class="wt">20 points</span><h4>Local UAE signal</h4><p>Geo-segmented URLs, a genuine local domain and entity, and content addressing UAE VAT, corporate tax, WPS and e-invoicing.</p></div>
+    <div><span class="wt">15 points</span><h4>Conversion architecture</h4><p>Inferred from indexed page types: dedicated SKU landing pages, pricing transparency, testimonial and case-study pages. <b>Lowest-confidence column.</b></p></div>
+    <div><span class="wt">10 points</span><h4>Verifiable proof</h4><p>Named awards with years, specific client counts, certification tier. Numbers that can be checked, not adjectives.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head">
+    <span class="eyebrow">The league table</span>
+    <h2>Top three and bottom three</h2>
+    <p class="lede col">Scored out of 100. The six profiled firms sit at the extremes of a pool of roughly twenty-five UAE and GCC partners across the three ecosystems.</p>
+  </div>
+  <div class="scroller">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Partner</th>
+          <th>Ecosystem</th>
+          <th class="num">Visib.<br>/30</th>
+          <th class="num">Content<br>/25</th>
+          <th class="num">Local<br>/20</th>
+          <th class="num">Conv.<br>/15</th>
+          <th class="num">Proof<br>/10</th>
+          <th class="num">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="band"><td colspan="9"><span class="bandlabel">Leaders</span></td></tr>
+        <tr>
+          <td class="rank top">01</td>
+          <td><span class="co">Azdan</span><span class="dom">azdan.com</span></td>
+          <td class="eco">Oracle NetSuite · EPM</td>
+          <td class="num">27</td><td class="num">25</td><td class="num">16</td><td class="num">10</td><td class="num">9</td>
+          <td class="total">87<div class="bar"><i class="g" style="width:87%"></i></div></td>
+        </tr>
+        <tr>
+          <td class="rank top">02</td>
+          <td><span class="co">Burhani</span><span class="dom">burhani.co</span></td>
+          <td class="eco">Microsoft Dynamics 365</td>
+          <td class="num">21</td><td class="num">19</td><td class="num">18</td><td class="num">11</td><td class="num">7</td>
+          <td class="total">76<div class="bar"><i class="g" style="width:76%"></i></div></td>
+        </tr>
+        <tr>
+          <td class="rank top">03</td>
+          <td><span class="co">SaaSWorx</span><span class="dom">saasworx.ai</span></td>
+          <td class="eco">Oracle NetSuite</td>
+          <td class="num">18</td><td class="num">20</td><td class="num">17</td><td class="num">9</td><td class="num">5</td>
+          <td class="total">69<div class="bar"><i class="g" style="width:69%"></i></div></td>
+        </tr>
+        <tr class="band"><td colspan="9"><span class="bandlabel">Close behind — SEAL Infotech, Pinnacle, WMS, Emerging Alliance, Dynasoft Cloud (58–66)</span></td></tr>
+        <tr class="band"><td colspan="9"><span class="bandlabel">Laggards</span></td></tr>
+        <tr>
+          <td class="rank bot">23</td>
+          <td><span class="co">IAX Services</span><span class="dom">iaxservices.ae + iaxdynamics.com</span></td>
+          <td class="eco">Microsoft Dynamics 365</td>
+          <td class="num">11</td><td class="num">7</td><td class="num">12</td><td class="num">4</td><td class="num">5</td>
+          <td class="total">39<div class="bar"><i class="r" style="width:39%"></i></div></td>
+        </tr>
+        <tr>
+          <td class="rank bot">24</td>
+          <td><span class="co">Inecom / Cogniscient</span><span class="dom">inecom.co.in/uae · cogniscient.in</span></td>
+          <td class="eco">SAP Business One</td>
+          <td class="num">10</td><td class="num">8</td><td class="num">6</td><td class="num">5</td><td class="num">5</td>
+          <td class="total">34<div class="bar"><i class="r" style="width:34%"></i></div></td>
+        </tr>
+        <tr>
+          <td class="rank bot">25</td>
+          <td><span class="co">Nija Technologies</span><span class="dom">nijatech.com</span></td>
+          <td class="eco">Oracle NetSuite · SAP</td>
+          <td class="num">8</td><td class="num">6</td><td class="num">8</td><td class="num">3</td><td class="num">3</td>
+          <td class="total">28<div class="bar"><i class="r" style="width:28%"></i></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head col">
+    <span class="eyebrow">Leaders</span>
+    <h2>Why the top three win</h2>
+  </div>
+  <div class="profiles">
+
+    <div class="card pos">
+      <div class="card-head">
+        <div class="card-id">
+          <span class="bignum">01</span>
+          <div><h3>Azdan</h3><span class="dom">azdan.com · Oracle NetSuite &amp; EPM · Dubai HQ</span></div>
+        </div>
+        <span class="score-tag">87 / 100</span>
+      </div>
+      <div>
+        <span class="whatwork">What it does differently</span>
+        <ul>
+          <li><b>It publishes the shortlist its buyers are searching for.</b> Azdan ranks with pages titled "Top 10 SAP Partners in Dubai, UAE", "Top 15 Microsoft Dynamics Partners in UAE", "20 Oracle NetSuite Solution Providers in the Middle East", and "ERP Companies in the UAE: A Complete Partner Directory" — categories well beyond its own NetSuite practice. A buyer researching <em>any</em> of the three ecosystems can land on an Azdan page.</li>
+          <li><b>It captures competitor-brand intent.</b> Someone searching a rival's name can arrive on a directory Azdan wrote, framed by criteria Azdan chose. This is the single highest-leverage tactic observed anywhere in the UAE ERP market.</li>
+          <li><b>Proof is specific and checkable.</b> #1 Oracle NetSuite AMO partner in the Middle East by AMO ARR (FY26); Regional Solution Provider of the Year, ECEMEA (2020); 200+ implementations; 200+ certified consultants; offices in UAE, KSA, Egypt and the US.</li>
+          <li><b>Fixed-fee framing removes the biggest objection.</b> "Delivered fixed-fee by certified consultants" answers the cost-uncertainty fear that stalls most mid-market ERP deals.</li>
+        </ul>
+      </div>
+      <p class="evidence"><b>Evidence:</b> surfaced in 5 of 12 test queries, more than any other domain, and repeatedly held multiple results within a single result page. Directory pages ranked for categories outside its own product line.</p>
+    </div>
+
+    <div class="card pos">
+      <div class="card-head">
+        <div class="card-id">
+          <span class="bignum">02</span>
+          <div><h3>Burhani</h3><span class="dom">burhani.co · Microsoft Dynamics 365 · Dubai &amp; Abu Dhabi</span></div>
+        </div>
+        <span class="score-tag">76 / 100</span>
+      </div>
+      <div>
+        <span class="whatwork">What it does differently</span>
+        <ul>
+          <li><b>Geo-segmented site architecture.</b> URLs run <span class="dom">/ae/microsoft-dynamics-365/</span> and <span class="dom">/ae/microsoft-dynamics-365/dynamics-business-central/</span>. Each market and each product gets its own indexable page, so the site competes separately for "Dynamics 365 partner UAE" and "Business Central partner Dubai" — different queries with different buyers.</li>
+          <li><b>One page per SKU, not one page per vendor.</b> Most competitors run a single "Microsoft Dynamics" page and lose every product-level search beneath it.</li>
+          <li><b>It publishes against the regulatory calendar.</b> "How Modern ERP Solutions Simplify UAE Corporate Tax Compliance 2026" ranks for compliance queries — traffic that arrives with a deadline attached and therefore a real budget behind it.</li>
+          <li><b>Credential plus tenure, stated plainly.</b> Microsoft Gold Partner, 20+ years in market, positioned as one of the fastest-growing Business Central partners in the UAE.</li>
+        </ul>
+      </div>
+      <p class="evidence"><b>Evidence:</b> surfaced in 3 of 12 test queries across three distinct funnel stages — partner-selection, product-plus-pricing, and regulatory-compliance. Breadth across stages, not just volume.</p>
+    </div>
+
+    <div class="card pos">
+      <div class="card-head">
+        <div class="card-id">
+          <span class="bignum">03</span>
+          <div><h3>SaaSWorx</h3><span class="dom">saasworx.ai · Oracle NetSuite · Dubai</span></div>
+        </div>
+        <span class="score-tag">69 / 100</span>
+      </div>
+      <div>
+        <span class="whatwork">What it does differently</span>
+        <ul>
+          <li><b>It got to the e-invoicing mandate early.</b> "Top ERP Solutions for UAE e-Invoicing Compliance in 2026" ranks now, ahead of the demand spike. The UAE timeline — voluntary pilot from 1 July 2026, ASP appointment for large businesses by 31 July 2026, mandatory for large businesses 1 January 2027, universal 1 July 2027 — guarantees rising search volume with a legal deadline behind it.</li>
+          <li><b>Geo-pathed URLs.</b> A <span class="dom">/uae/</span> segment separates the UAE market cleanly, the same structural advantage Burhani holds.</li>
+          <li><b>Category-first, vendor-second framing.</b> Ranking for "top ERP solutions for compliance" rather than "we are a NetSuite partner" catches buyers before they have chosen a platform — the stage where a partner still influences the decision.</li>
+        </ul>
+      </div>
+      <p class="evidence"><b>Evidence:</b> surfaced in 2 of 12 test queries, but on the two highest-intent, most time-sensitive topics in the current UAE market. Thinner verifiable proof than the two above — no named awards or client counts found — which is what caps the score at 69.</p>
+    </div>
+
+  </div>
+</section>
+
+<section>
+  <div class="sec-head col">
+    <span class="eyebrow">Laggards</span>
+    <h2>Why the bottom three trail</h2>
+    <p class="lede">Each of these is a real, operating firm. What follows is a critique of web execution only.</p>
+  </div>
+  <div class="profiles">
+
+    <div class="card neg">
+      <div class="card-head">
+        <div class="card-id">
+          <span class="bignum b">25</span>
+          <div><h3>Nija Technologies</h3><span class="dom">nijatech.com · NetSuite &amp; SAP consulting</span></div>
+        </div>
+        <span class="score-tag">28 / 100</span>
+      </div>
+      <div>
+        <span class="whatwork">What's broken</span>
+        <ul>
+          <li><b>Its main commercial page still carries the theme's placeholder URL.</b> The page titled "Top 10 NetSuite ERP partners in Dubai, UAE" is published at <span class="dom">nijatech.com/etiam-aenean-sed-quam-id-ac-proin-nullam-in/</span> — Lorem Ipsum filler text from a template demo, never replaced.</li>
+          <li><b>Three separate costs.</b> The URL throws away a keyword-relevance signal on the firm's most valuable page; it signals an unmaintained site to search engines; and any buyer who glances at the address bar sees placeholder Latin on the page meant to prove technical competence.</li>
+          <li><b>Nothing else compensates.</b> No awards, client counts or case-study figures surfaced in any query.</li>
+        </ul>
+      </div>
+      <p class="evidence"><b>Evidence:</b> the placeholder slug is visible in the search result URL itself and is the clearest single piece of hard evidence in this study. <b>Fix effort:</b> roughly one hour — rewrite the slug, add a 301 redirect.</p>
+    </div>
+
+    <div class="card neg">
+      <div class="card-head">
+        <div class="card-id">
+          <span class="bignum b">24</span>
+          <div><h3>Inecom &amp; Cogniscient</h3><span class="dom">inecom.co.in/uae · cogniscient.in · SAP Business One</span></div>
+        </div>
+        <span class="score-tag">34 / 100</span>
+      </div>
+      <div>
+        <span class="whatwork">What's broken</span>
+        <ul>
+          <li><b>A UAE business run from an Indian domain.</b> Both target Dubai buyers from <span class="dom">.in</span> / <span class="dom">.co.in</span> country-code domains, with the entire UAE proposition compressed into a single thin page.</li>
+          <li><b>The domain contradicts the pitch.</b> The core promise is local presence and UAE compliance knowledge. A <span class="dom">.co.in</span> address in the browser bar undercuts that at the exact moment a buyer is judging whether the firm is really here — and country-code domains carry a geo-signal that works against them in UAE results.</li>
+          <li><b>One page cannot cover a market.</b> Competitors run dozens of UAE pages across products, industries and compliance topics; a lone <span class="dom">/uae/</span> page can rank for one query at best.</li>
+        </ul>
+      </div>
+      <p class="evidence"><b>Evidence:</b> both surfaced only on the single query "SAP Business One partner Dubai" and on no vertical, cost or compliance query. <b>Fix effort:</b> significant — a <span class="dom">.ae</span> domain or a properly built UAE subfolder with real local content.</p>
+    </div>
+
+    <div class="card neg">
+      <div class="card-head">
+        <div class="card-id">
+          <span class="bignum b">23</span>
+          <div><h3>IAX Services</h3><span class="dom">iaxservices.ae + iaxdynamics.com · Microsoft Dynamics 365</span></div>
+        </div>
+        <span class="score-tag">39 / 100</span>
+      </div>
+      <div>
+        <span class="whatwork">What's broken</span>
+        <ul>
+          <li><b>The brand is split across two domains.</b> <span class="dom">iaxservices.ae</span> and <span class="dom">iaxdynamics.com</span> both rank for Dynamics 365 queries. Authority, backlinks and content that should compound on one domain are divided between two, and neither reaches the strength their combined footprint would earn.</li>
+          <li><b>This is the most self-inflicted problem in the study.</b> IAX claims more than 300 Dynamics 365 customers across the UAE — on the numbers, one of the largest Dynamics installed bases in the market, and more delivery proof than either firm ranked above it.</li>
+          <li><b>The substance never reaches the buyer.</b> Nothing in its indexed pages converts that installed base into named case studies, published outcomes or review volume. The strongest asset the firm owns is invisible on the web.</li>
+        </ul>
+      </div>
+      <p class="evidence"><b>Evidence:</b> both domains appeared for Dynamics queries, neither above competitors with far smaller client bases. <b>Clearest illustration that this study scores marketing, not delivery</b> — on implementation track record IAX would likely rank near the top.</p>
+    </div>
+
+  </div>
+</section>
+
+<section>
+  <div class="sec-head col">
+    <span class="eyebrow">The playbook</span>
+    <h2>Six tactics that drive clicks and enquiries</h2>
+    <p class="lede">Drawn from what the leaders actually publish. The mechanism line explains why each one moves click-through or conversion — the causal logic is well established, though the rate changes on any specific site are projections, not measurements.</p>
+  </div>
+  <div class="plays">
+
+    <div class="play">
+      <span class="play-n">01</span>
+      <div>
+        <h4>Publish the directory that ranks your competitors</h4>
+        <p>The highest-intent query in this market is not "NetSuite partner" — it is "top ERP partners in Dubai". A buyer typing that is building a shortlist. Azdan owns those pages, so it writes the shortlist and sets the criteria.</p>
+        <p class="mech"><b>Mechanism:</b> captures competitor-brand and category searches at the evaluation stage · lifts CTR because listicle and "top 10" titles out-click brochure titles on the same result page · lifts conversion because the reader arrives already comparing, and you are the frame.</p>
+      </div>
+    </div>
+
+    <div class="play">
+      <span class="play-n">02</span>
+      <div>
+        <h4>Geo-segment the URL, not just the copy</h4>
+        <p>Burhani's <span class="dom">/ae/</span> and SaaSWorx's <span class="dom">/uae/</span> paths give each market its own indexable surface. Nearly all commercial ERP search in this region carries a location modifier — "in Dubai", "in UAE", "in Abu Dhabi".</p>
+        <p class="mech"><b>Mechanism:</b> a dedicated page can match the location query exactly instead of diluting it · the matched location appears in the title and URL, which raises click-through on locally-intended searches.</p>
+      </div>
+    </div>
+
+    <div class="play">
+      <span class="play-n">03</span>
+      <div>
+        <h4>Ride the regulatory calendar</h4>
+        <p>UAE e-invoicing phases in from a July 2026 pilot to a universal mandate in July 2027, alongside 9% corporate tax. Every affected business must act by a fixed date. Burhani and SaaSWorx both rank on this now; most competitors have not published.</p>
+        <p class="mech"><b>Mechanism:</b> deadline-driven demand converts far better than curiosity-driven demand — the buyer has a date, a penalty and a budget · publishing ahead of the spike compounds ranking authority before competitors arrive.</p>
+      </div>
+    </div>
+
+    <div class="play">
+      <span class="play-n">04</span>
+      <div>
+        <h4>One landing page per SKU</h4>
+        <p>"Business Central partner Dubai" and "Dynamics 365 partner Dubai" are different searches from different buyers with different budgets. Burhani runs a page for each; most partners run one page for the whole vendor and lose the product-level long tail entirely.</p>
+        <p class="mech"><b>Mechanism:</b> exact-match relevance lifts both ranking and CTR · a page about the one product the buyer named converts better than a page listing everything the firm sells.</p>
+      </div>
+    </div>
+
+    <div class="play">
+      <span class="play-n">05</span>
+      <div>
+        <h4>Put checkable numbers where adjectives usually go</h4>
+        <p>"#1 NetSuite AMO partner in the Middle East, FY26". "200+ implementations". "300+ Dynamics customers". "1000+ licences delivered". Compare with the market's default register — "leading", "trusted", "best-in-class" — which every competitor also claims.</p>
+        <p class="mech"><b>Mechanism:</b> specific figures are falsifiable, so buyers weight them far more heavily · dated awards and client counts are the cheapest available substitute for the peer references enterprise buyers actually want.</p>
+      </div>
+    </div>
+
+    <div class="play">
+      <span class="play-n">06</span>
+      <div>
+        <h4>Publish the price range</h4>
+        <p>Cost pages own the highest-intent query in the funnel — "ERP implementation cost UAE" — and the sites ranking there openly quote AED 25,000 to AED 500,000+, broken down by company size. Almost no Dynamics, Oracle or SAP partner in this study publishes a range, ceding that traffic to smaller local vendors.</p>
+        <p class="mech"><b>Mechanism:</b> "cost" and "price" searches sit closest to purchase · a published range pre-qualifies enquiries, so total form fills may fall while qualified enquiries rise · the firms winning these pages are mostly not the big-three partners, which is the clearest open opportunity in the market.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section>
+  <div class="sec-head col">
+    <span class="eyebrow">Next</span>
+    <h2>What would close the evidence gap</h2>
+    <p class="lede">Four things would convert this from a search-visibility study into a defensible performance benchmark. None require the partners' cooperation.</p>
+  </div>
+  <div class="gaps">
+    <div class="gap"><h4>Traffic estimates</h4><p>Similarweb or Semrush on these domains gives visit volume, traffic share and keyword counts — the actual numbers this study proxies for.</p></div>
+    <div class="gap"><h4>Core Web Vitals</h4><p>PageSpeed Insights on each homepage and top landing page. Mobile load time is a direct, measurable conversion lever and could not be tested here.</p></div>
+    <div class="gap"><h4>Conversion audit</h4><p>Loading each site to record CTA count and placement, form field count, WhatsApp and live-chat presence, and pricing disclosure. All inferred here, none observed.</p></div>
+    <div class="gap"><h4>Google Business Profiles</h4><p>Review counts and ratings for each firm's Dubai and Abu Dhabi listings — local-pack visibility that organic results do not capture.</p></div>
+  </div>
+</section>
+
+<footer>
+  <p>Compiled 1 September 2026 from twelve high-intent UAE search queries across the Microsoft Dynamics, Oracle NetSuite and SAP partner ecosystems. Pool of roughly twenty-five UAE and GCC regional partners; global systems integrators excluded by scope.</p>
+  <p>Rankings reflect observable web performance only and are not an assessment of implementation quality, delivery capability or commercial standing.</p>
+</footer>
+
+</div>
