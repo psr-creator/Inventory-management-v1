@@ -22,7 +22,8 @@
     --amb2:#FFD37A;
     --grn:#34D399;
     --red:#FB7185;
-    --blu:#60A5FA;
+    --blu:#45B3E8;
+    --brand:#2B9FD9;
     --vio:#A78BFA;
   }
   *{box-sizing:border-box;margin:0;padding:0}
@@ -87,6 +88,8 @@
   .p-idle{background:rgba(255,255,255,.07);color:var(--mut)}
   .dot{width:6px;height:6px;border-radius:50%;background:currentColor;display:block}
 
+  .rlogo{background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVoAAABbCAYAAAAyek1nAAAZfUlEQVR42u2debgcRbnGfyfpJBw6IR1CYkMSc7KCCoSwyCKCiKMoNuKCKCKLCwquoAJy8YJBBC+biIILyOKVyCLGOxCR9iJoEFnMAzcgSwgCIUknJKEJaRKSTs79o2oeOuOcmemequ6ZSb3PM89Jzpnp7qqpeuurr97v+3r6+/sxMDAwMNCHQaYLDAwMDPTCqv5FT0+P6RWgVA5GAOt8z41NbxgYGDRCPe+AsWgHhg2UTDcYGBi0CkO09fvmWNMNBgYGhmj14U3AEaVyMMx0hYGBgSFaPXgrMBx4r+kKAwMDQ7R68G7580OmKwwMDFpBT/VJmVEdQKkcDAeWANsBy4BxvucawbGBgcGAMKqD9DhNkizAjsAM0yUGBgbGdaDOmp0BnFX16/ebnjEwMDBEq4ZkJwP/A1QrDQ41vWNgYJAVxkf7Bsm+A7hFugqqsQ5wfM/dYIaMgYFBLdTz0VrGig0c4Gzg68DgAd7WC+wN/M0MJwMDg7TYaom2VA76gJOAU4CRTXzkIEO0BgYGhmjrE6sF7A4cBnwU2DPlJd4JXGiGjIGBwVZPtJJQXWAaMB3YRZLq3sC2LVx6LzNcDAwMsqCtD8Nk4MAo+XLkz+3la1TiZ+XfE4Cx6FNTjPc9d4kZNgYAYRQPRYRo74vIjTG0wUdeBRYCf3Bsa6Hpwe5CWx6GlcrBUGlxTkpYnuOBnRAn/6Pa0OLeCxExZmBI9lDgemBcho//MIziK4DTHNvaZHrTuA5UEmuP3MJ7iDyve/HvetV2x94InW07W1hJ98hGx7YiM8yV9/PuQBmhRsm0kwS+CjwPXGp61BCtCoKdCJwIHA/0dXh/zdA0cXeQVvxYYDSwg/w5BhEKvB0ik9iIxM8RCDnaIPnvga5d69fr5OsV+VoOLAZeBJ4AHgeecmwrVtS+XeR1VcF1bGt5geNgVgskm8QphmgN0bZKsDOB04GjGFif2mnYWdN1b0f4+fJCr3xtX+c9URjF84A/A791bOuZFu43TeGzry2SZOWuQVVI9pQwinsd21pnqKi7ofzQqFQOJpfKwa+B+cAnuohkASaXyoGO9kxrw7bawPsQkraFYRQ/HEbxsWEUZ1mcpyp8rmcK7pddaHzolQYmsbwh2lQEO6RUDs6U285jurS/hgBvVmwhjWpgWbYL9gJ+BTwVRnFai25KFxGtykVxM7DW0JAh2mZJdhrwd+ACYJsu7zPV7oOpHdb+ycDcMIqvC6O4t4A2Pt0G7VeFF1T5wQ26nGhL5eAo6SbYcyvpM9Xb/Okd2g/HA3eFUbxtzn1WtEU7vYvaYpATMh+GSbnWfwDnbWV9NmErt2iTOBC4OYziIxzb2lzrDWEUDwEmdhE5qfy+FhkKMhZtI5K9UjPJhsBVCMlRO2G8IdotcDgiOc9AmIjaA9GiI6omdFFbDNqVaBMk+0XNz+YAByC0q0ejVofZCtw2d0UUgQvkoZ7uhWStY1tBwW21FV7rCQwM0Q6A83Ig2QpmIMIcbwF2RagZFhfcZ2MM0dZcFE/IoX3t4NMMFV1nM/CgoaCtA6l8tKVy8FmEXzZPfBA4y/fc84HZpXJwO3A+8GVEKGPeUCbF6iBpVzM4EbhMs0X7VBu0cx5CS9sq5ji2tdJQUHtD6sZLwDsQeVgGASvkOJjbrGqk6exdpXKwD/BXihFYbwb28z33ocTzHCgtXTfnZ1nve26voi9xny6zasY6tvVSVRvvAD6g6Prfc2zrOwVPvGnAI7SWcnMZsL9jW88bKmtrkj0W+D4D++UXAZ92bOt+UFBuXKYrnE1xUSyDgJ/JXLMA+J47D5gpyT9PqNQJT++ysbl/jd91U7ACMr3hOzKOu43AzcB+hmTbmmAHh1H8S0SAzk7y5xEIDf00RLHW2XJs3xtG8btUuQ5+oHjCZMFM4AvATxJkG5TKwXuAXwDH5fUgpXIw3PdcFRE9U7tsjPZVD1jUCvzbQnfq2NYjwEEyGdBbED7qesqK9cAq4DGT16AjcA7CFfYC8BHHtv5RYxzeHUbxn4GfA7+WiZNezew6KJWDfRFRX+2AxcDU6mq0OSohKhjle26oYOX8FXCsomf6k2NbpQb360VkCTsQOBXYQ3G/XOTY1umJ+00CnlV4/dGOba02PGCg0ZrdHRGAFSHSos5iyyRCayXRXujY1p1hFN8EfBw4eeS2g3+ayXUgCeyKNuqHCXKl2QK+5/YjUs5d22Hfq8oT+YaaTMe21jm29axjWzfI7a9qwfxQjRb7UkOyBjngNLk7mSXdRLsiirdWXuOAg4FbwygehFBFgTgwIxPRAh8C9mmzjji51i8l2X4euHMrJdpUpOnY1mvAdZrbp5JoF2S0UIaHUTwujOIJYRSPNDwyYD9ZYRTvFEZxn3SJtMtzDQqj2JGvifL5JlR+p+GWhwObgGvDKO5JjOH1CH9tZbEfIgm5Ijetm2zKamDNntOGY2JGqRzM8D330Rpku6lUDj4B/IPifcqNBpBqaVcW/6XqA5n1Gon2wSb6tBc4BFHpeB/gbVQlRQ+j+HXpzpgP/Akhswq3MlIdC7xHbo1nIvzMY0nIJcMojoBHgXuAmxzb+j/Nz7OPfJYpCL/+ON6oCVjvs5uBlQgf+POIpEML5XiZnyZpTxjFExFJ959xbGt1GMXjeePwextgqfz3BuAzjm1tDKO4oqtflYloESdre7TpWDlaDoJalu0rpXJwDHAf7V3lV/VBWBaiVa1DXqaxjffXmSB7I8KAP0GdahMSwySxvAX4FHBlGMXXAd+tl1A8jOKTgTMUtcV3bOvz8rpXkT2R+PmObf2iSRJxEYmAPgy8vYnv3kZEZh4AnCUPfr7p2NZ8BcTaAxwEHCktyFZ2doPkIjFWfqeHJf62Lozie4Fbgd814Xqq5OT4l/yZNNZWAw8hcjQPRRTjTL5nQVaiPaWNSaoEnDXgKPbcB0vlYBbCka0cKg7CUCvt6s9ItKrzNizXRLSbqXEgG0bxfsC5cvBnRa90Rx0VRvGxjm39cYD37Ym65DhJxcp+LVy34fcn++g0SbCtGB6HAA+GUXymY1sXZyTYXoRy6BTyiYjslcR7GPATuaBeXKdayLo64/dvwHcSY22m/HlEI0OgshrUchtsjyii2K7Ys1QOGvnbLgD+qeHequQ5Kq29xY5tvZ7hc29T3DdPVlktqtw38x3bejlx7XFhFP9GDu73KbrHDkA5jOKBgitUuqKeVXTdkXVIbUYYxXNkHx2laHc3GLgojOJzM5Dsp+S2/jKKCTsfJkn+iTCKZ4VRPGyA8bsBeLtcFKbU2TG6YRTvKy3y5YhyVOmIVsHqlxXNJnUe1Mit4XtuLFdy1XilDYk2q750psJniKsWtvGoC3C5q0LeYRR/UU6IozV8t0OAG8Mo3kkz0S6U7RnThKsjFdGGUbxNGMUXIs4pPqRpnp4TRvHhTRLsqDCKbwX+W8MOKgssaZk+EEZxX/IPjm29CsyR/XqWY1tnObbVI1+nOrb1SOX/wGcRkak9wJmObW3IQrRFCen/K8V7G1Y68D33j8AfFT/jCkXXyVXaVWMCjEf4tFRhQdVgUzmG7pAHJmVE6szhGsfgyGqXk7R+VKZHXKRoDIyses6ZCF/hGeiv1Xd5o/pxYRRPQRxKfbQNd8UzgHnyGZM4A1gDnB1G8XerLV+pzjgBcZg6AbjOsa3rmrEMa+FShZZbs5hLurj/ZifyBYqfU1WavkKJVoNFOFfTYr0MIbf5h9ym5YFPh1GctDQnoe7gcBPwnCIrebsEARyH8CPmZSRNoY57MYziccC9tHf04zhEWaaRCav2OURujpXAfwLLwij+bRjFvwqjeK40tK5FRAOeIy3bprbgtSzBl4Cv5tjgEOEgH5viM6ObeZPvuffKSYrCid9aYwuWdoVRvB3wTcXf4e2aFpINCIlRntvOocC7NS2KLzi2tVHRYrSddKdciBDO512v78MDjK9euQUfR/tjOnB5lQvhPmnx/lCOv48gIjjfD7yGCLvd1bGtWQNVFmnWosX33BsQOQR0YzNwou+5z6cc0GkSMP9Qw7avFRQm7QqjeDTwe9RmPVsIPFDD4lGBiRRT8DPpv56safy0et2RiNDzMygGbx/g9xcjNLqdguPDKN6/imyXOrZ1KiJkfTQiIMFxbGu8Y1tfcGzryTQ3aHTg9WU5IXUqEL7ke+4c+e80X06ayTcHIabfRvFEaWUVVYnhYRTvUaefhiMSvhwAfIzWDmBq4VLHtvo1LyZ5Y0dNbVmo0FKeTrEZ4CbWWMgPYIDozTbHt6TlShXh9iM0tC2Ff1sNtt0bSuXgY9JUPl5xwzYCn5OWcwWHpPh80z5k33PXlsrB3FodmQEqkk+rJqEik/78E7gmhzbmjWEarPPqhXpKh/dRLcPlCopJyN8qjgijeCfHtpbquHjDfLS+527wPfcE4EvSP6Fqq3tgkmRL5WD3lFupNSnvOUfBc29CjTa3W9IjbgCOT/gcK1bNOFpLjN0ubVNleVaPfeQBzA4d3kfV3/thiMCOTsRg3gg+yJ9oE4R7JULgPhsRiZQFryA0bLv5nlutMDgh5bXSnv7PU9BfT/qeqyJgoRvqhG0GTnRs6+Eaf5vcBe1bIcljMFV5dlvEs11izdaag2dqvNcrcjfwdKvb+Dp4T+FEK8n2Od9zj0H4hS6huUKJ/YiDkq8Afb7nfs/33C2Sj5TKgQN8JuWzP57y2f9F69IsVeqFTifadcAnHdu6sYst9kqY7JtRG7zzTBcR7T8T1uxURPpA1fgZsBswyrGtqY5t7ezY1mhEwJLq6ir76uqoTAPI99xnEPKgb5bKwVTE6eNkuRUaLCfiCkQ55b/7nruqwSVPpU444QB4LMOjP9ji9qDlL7YLCjLeB3yuwalrNxDtQg1tWZqosDCti/oI9FQ4Od2xrYtq/cGxrUfDKD4SoUlWdbg7PoziXh1VMFpeqSXpZi4xUioHk4DTU35sibxv1m1bVtyjoM87kYQ2IyLsfuLY1h1NvL8baqHp2OInx2yeFu1GOddVH1Il26M63PchhExsQMhUhvPInv2sFvqkgVic60A1SuVgMCL5dFrZ1V0Zb9lK/tWs5N6JJLQE+AvwY+AYRHXbDzRJsrpJ5EVEtN+7EIL4YdKiuUITiehKzq5zwV2LCGD4JDDFsa2hCInfzTr6KIziCcDuiq99cQ3JYCOrWgWctnEdKMT3EXkp02JOC5M0K25X1OZOsGjPQ+RMzboD0EG0SxEhkdfXSOa8IYziyjmACiyXCUagfYMVamElIk/DNbKCRtL6ey2M4hsQ9a1UoZIEqqS4Ha8DzS7q/YrvrSU4pjCiLZWDkzO4DECEwM7NeNv1LTzy77Yiov2ptFQeAM6pk6P13yAzUm2n+HmuBr7h2FY9Sd+bFd5voabvq5K1qxf1IcVXIrJIvVrnPSold8mcDfspbsvdjm1FBXHYCB0TqhCiLZWDr5E9LPZqmQIx65YqC9YAdytqficdguwL3BlG8fXASY1SwWlwjcTAUY5tNbOD0ZV2Ukewgmpr9rOObf2yifftpPCezyf00wcobs99Kd6rWou8RsdEGlSDBLX5bUvlYGipHPy4BZJdC/yoAMK5yffcjVsh0VZwPPAbmcw7T7fBoiZJVgvRysCLXg0ErnpXc1MBfVSxzrcF3qq4PQ+leO+bFN/7NR0TqBapHlwqB2eXysFQxSS7J0Je9aUWLnOJ77krW/h81iqoV6vogw6Xdn0Y+FrORJvmoEMliTytoS2rHdt6RcOzLk2xzdZxsLcL6tUMafTqkxTfe62OyVOLaO9H+E4XlMrBcaVyMKRFgp1WKgfXAg8jUo9lxXM0kHs0gTEZPrOgRhRbVnS6vvTcJko85145IoxiW/G2WEdQQXLRmJx3H2kg2sp9VVuzyx3bWtXk9z4EtQnZQShulOPffLS+564vlYObEQltrwe+VyoH1wC3+Z67oElyHYkIDDgakURXxYr3Bd9zW11tsvhzVLoqVPovI0S57HqL6ETUym5GynFxSU5tbFb1oHoBW6Thuos09VGzi9EQ1BWXTN5XtVwxTfrBSaiVqK5N7Dr0Eq3EZbyROXwCotLouaVysFia9Y8iwm/XIMTQIySJ7QzsJS3XIQqf83Lfc+9ScJ20pVuWADcobIfKiTvfsa0jm5hgB0tCVnXw+fEGRKsrpWBe/boyoW7QFawwuYA+6kNteZuFCX5QiTRJm1Rb0y/o2grWnHy+5z5eKgezEYLnJCbI15Hkh3tQVw0grXV3ie+5GxS2RZeFNCAc27o3jOI/sWW9+1awdxjFI2rJiKQP2imARFRuiZ/WdN1FmizLZvtIpeW5ObHbUC1TS6PdVl3F+Sk0oZ7Z/S3yrxtWjceAo1qQcyXdGUNTWrRLEAktVEKHj6wZLFA8ZnbLYSHZlMLC0NWvOoIVJiq2LItwr7yQkPq5iudIkUT7GJpQr5TNEorNlP4U8O4WVQZJHEC68tdn+p6rWupRVEFG1SepU3Kwmp6vznObE4lUpF2jNVnnRZUx0nVIqVrgvzjFe1WXy3kcTajrSPY9dzZwUQEkex/wTlkkUhXem+K9DwG/VtkgDdKuNCV1XlL8/UzKeTLnSSILGywmWbDWsa0VGp51eYNIMF2LYNK90qt4bK1ocj6NRL0m/SE0oZkTuzOQIZk54XrgUMUkC82Xqo6Bk3zPVR1DXVhBRkQMvEr0pbR0tbVPg7RroWZ3RFE6Y11qkGGKx1az7krVuW+DFnJ7tE60knBOQST00InVwMd9zz3B99zXVV64VA72oPmDsPN9z31EQ/tUDvRVKWUoyxS3pW2IVuMCprItzxZp9YdRPBS1uSCeyUCMqnG44uvdp/Nhm9Kg+Z7b73vueXL7rVrQu0lazG/xPfcWTe1stnrDI8D5mp6hqG21DtdBXw6LSRFEuzKxgHVTsMJk1OpNk/eNFI+t4U0sHMMR1ZxVYi4akbaUjY84uT+f1g9Y1iNCW3fzPfdk33NX6GhgqRwMB45tZuFHKBw2aurrIvSlFaju2wmyllZy8KsuNtjsNq4T8sVWpF2D0BMqnGcf9VcR7XLFY2v/Jt5zMmrPO/rbimgl2b7qe+7ZCD3t1xAO5Gb9mRsBX3bUeN9zP+977hPoxZeBUQ3esxk4RlFi77wJoSEc23qZLau6tgoLkXRbl9ugP4W1pkvJocMNMg4YquG6eS7yix3bSrr2nlQ8T84Mo3hEHWv2gxp2nfMc2wo0zv3s0UK+54aI8NQflcrBGETdsF0lAQ9PEOtLCD3kI8CjiqrIprFmmwl2ONv33D9ofpzCiLayLUbtoVEfW+pcp2iczLm6ZOREf5OG76vbpF2QLpKrGewJPB5G8W0I/fcahLJhAiLBuI4CkFdrnvtqwjKlQuAOms+KnhfOBkY3eM9VvudeoPMhNEi7spTvWKaBaP+S+H8ROQ50kYhKP+oG3qjsoXIxKkraVT327tYwZSq75TywCrhV900KrRmm2ZrdDfhGg7fdiLryJ3mRQVaLVveBWBGn6b2KF4+nNbRlkWNbmzVct6gUklvc17Gtx0kXZNBuuLi67I8h2uZJdjDw8wYW+/XAcb7nbsrhkVRaFGsc28pCmqoPxPrymsw5LmA6pF26DtiKknbVWuSv6VCqeAlRgFQ7utWi/U/q1zG6HDgxJ5ItZILV2mpqJtrJmiez7n5dLQ8NoTOCFYqSdtX6bn6KKKjYafiqY1tr87iRRZehVA4OR/hma2Ez8HXfc6/I+bFyz9qVp+tAY+LtorbEnRCsUIS0q+Z349jW8jCKLwW+3UFUcZtjW7/J62ZdZdHKCLAbB2jXKuC9BZCs6sGetY69avlKUktb1Gm6SpfMIk1EW6mtNYYmxPhtvhi96NjWQKqhWWhMyqIYCxB18HJD1xBtqRxMRYiOa5W6/iuwh++5/1vQ4xWVHlGnRZvU0qpOlBIVQCIVadcw1CazXqRhUUgzDnIZe45trUdUVXmpzaniCeADebkMuopoS+VgV0SC8B2r/rQeUf/sEN9zXyzi2QrO2pWEjsi7Pl0WYFFEi8hMpqrY4CZErTtQ68NOI+3aOS9yl0lZDqF9VQj3Awc7tpU7F3Q80ZbKwbsQes7qSKUyIrz3ohwPvXSTQStEqyPypa8oi11Ku1Rm99eRteuFRE7dbpB2NfQLS7nXPnL+tQs2AecBB2VU7CjZ/nUyyX4FUb8qWZ/sXuBc33PvaZPHVLllfM2xraxJfVZqaNskDZO5qIKMCzVYnrr8vs0uRqrdIE3d17Gt5cARYRR/DBEuO73A+fc74NuObT1VJAl0JNGWysFY4BcInxCI6JvfAlf4nnt/mz1uESRUa/BvCKP4ZRrnfSiaaIvQ0IaJEte62lKExG+qQjdImvtWxtytMpT2SOAk4NCcOCcAZgNXOba1sB1IoKOItlQOehApD38A2IjDr98Dt/ie+3KbPvZ84LtFDPQauIzGIclpUEkocqvCCf1ACgv9ckX3TObrnYdQqKhAMjz1ZuBORde9PcWW+XKF33fqhV5Gxd0G3BZG8fbA+4B3IkpLvRU11bKXIZJbPYBIWvWwY1v97UQCPf39Wz5PT08P7YhSOdgRke7QAv4GPJhnghoDAwO1kPLAiQi/uAuMQaTa3EYSsC3f+jqwDpGkarV8vSSJ/18pk+BrQzWX1iVaAwMDAwO1GGS6wMDAwMAQrYGBgYEhWgMDAwMDQ7QGBgYGhmgNDAwMuhX/D5MbsWmGyQ0cAAAAAElFTkSuQmCC) no-repeat center/contain;display:block;flex:none}
+
   /* ---------- app mockup shell ---------- */
   .app{
     flex:1;display:flex;margin:0 40px 40px;border:1px solid var(--line);
@@ -94,9 +97,9 @@
     box-shadow:0 30px 70px rgba(0,0,0,.45);
   }
   .side{width:186px;flex:none;background:#0C1524;border-right:1px solid var(--line2);padding:16px 12px;display:flex;flex-direction:column}
-  .brandbox{display:flex;align-items:center;gap:9px;padding:6px 8px 16px}
-  .logo{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--amb),#FF8A00);display:flex;align-items:center;justify-content:center;font-size:14px}
-  .brandbox b{font-size:13px;letter-spacing:-.01em}
+  .brandbox{display:flex;flex-direction:column;gap:6px;padding:6px 8px 16px}
+  .brandbox .rlogo{width:100px;height:26px}
+  .brandbox span{font-size:8px;letter-spacing:.17em;text-transform:uppercase;color:var(--dim);font-weight:600}
   .navlbl{font-size:9px;letter-spacing:.16em;color:var(--dim);text-transform:uppercase;padding:12px 10px 6px;font-weight:600}
   .nav{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;font-size:12px;color:var(--mut);margin-bottom:2px}
   .nav i{font-style:normal;width:15px;text-align:center;font-size:12px;opacity:.9}
@@ -166,6 +169,7 @@
 <section class="slide">
   <div class="glow" style="width:620px;height:620px;background:rgba(255,176,32,.16);top:-220px;right:-160px"></div>
   <div class="glow" style="width:460px;height:460px;background:rgba(96,165,250,.13);bottom:-200px;left:-120px"></div>
+  <div class="rlogo" style="position:absolute;top:44px;left:56px;width:196px;height:52px;z-index:2"></div>
   <div class="pad" style="flex:1;display:flex;flex-direction:column;justify-content:center;position:relative">
     <div class="rise kick">Private &amp; Confidential · Prepared 2026</div>
     <h1 class="rise" style="margin-top:26px;max-width:880px">
@@ -334,7 +338,7 @@
   </div>
   <div class="app">
     <aside class="side">
-      <div class="brandbox"><div class="logo">🚌</div><b>Rhino Fleet</b></div>
+      <div class="brandbox"><div class="rlogo"></div><span>Bus Management</span></div>
       <div class="navlbl">Main</div>
       <div class="nav act"><i>▦</i>Dashboard</div>
       <div class="nav"><i>🚌</i>Bus Master</div>
@@ -407,7 +411,7 @@
   </div>
   <div class="app">
     <aside class="side">
-      <div class="brandbox"><div class="logo">🚌</div><b>Rhino Fleet</b></div>
+      <div class="brandbox"><div class="rlogo"></div><span>Bus Management</span></div>
       <div class="navlbl">Main</div>
       <div class="nav"><i>▦</i>Dashboard</div>
       <div class="nav act"><i>🚌</i>Bus Master</div>
@@ -468,7 +472,7 @@
   </div>
   <div class="app">
     <aside class="side">
-      <div class="brandbox"><div class="logo">🚌</div><b>Rhino Fleet</b></div>
+      <div class="brandbox"><div class="rlogo"></div><span>Bus Management</span></div>
       <div class="navlbl">Main</div>
       <div class="nav"><i>▦</i>Dashboard</div>
       <div class="nav act"><i>🚌</i>Bus Master</div>
@@ -534,7 +538,7 @@
   </div>
   <div class="app">
     <aside class="side">
-      <div class="brandbox"><div class="logo">🚌</div><b>Rhino Fleet</b></div>
+      <div class="brandbox"><div class="rlogo"></div><span>Bus Management</span></div>
       <div class="navlbl">Main</div>
       <div class="nav"><i>▦</i>Dashboard</div>
       <div class="nav"><i>🚌</i>Bus Master</div>
@@ -595,7 +599,7 @@
   </div>
   <div class="app">
     <aside class="side">
-      <div class="brandbox"><div class="logo">🚌</div><b>Rhino Fleet</b></div>
+      <div class="brandbox"><div class="rlogo"></div><span>Bus Management</span></div>
       <div class="navlbl">Main</div>
       <div class="nav"><i>▦</i>Dashboard</div>
       <div class="nav"><i>🚌</i>Bus Master</div>
@@ -700,7 +704,7 @@
   </div>
   <div class="app">
     <aside class="side">
-      <div class="brandbox"><div class="logo">🚌</div><b>Rhino Fleet</b></div>
+      <div class="brandbox"><div class="rlogo"></div><span>Bus Management</span></div>
       <div class="navlbl">Main</div>
       <div class="nav"><i>▦</i>Dashboard</div>
       <div class="nav"><i>🚌</i>Bus Master</div>
@@ -774,7 +778,7 @@
   </div>
   <div class="app">
     <aside class="side">
-      <div class="brandbox"><div class="logo">🚌</div><b>Rhino Fleet</b></div>
+      <div class="brandbox"><div class="rlogo"></div><span>Bus Management</span></div>
       <div class="navlbl">Main</div>
       <div class="nav"><i>▦</i>Dashboard</div>
       <div class="nav"><i>🚌</i>Bus Master</div>
@@ -824,7 +828,7 @@
   </div>
   <div class="app">
     <aside class="side">
-      <div class="brandbox"><div class="logo">🚌</div><b>Rhino Fleet</b></div>
+      <div class="brandbox"><div class="rlogo"></div><span>Bus Management</span></div>
       <div class="navlbl">Main</div>
       <div class="nav"><i>▦</i>Dashboard</div>
       <div class="nav"><i>🚌</i>Bus Master</div>
@@ -1054,7 +1058,8 @@
       </div>
     </div>
     <div class="rise" style="margin-top:38px;display:flex;align-items:center;gap:16px">
-      <div style="font-size:19px;font-weight:700;color:#fff">Thank you, Rhino.</div>
+      <div class="rlogo" style="width:132px;height:35px"></div>
+      <div style="font-size:19px;font-weight:700;color:#fff">Thank you.</div>
       <div style="height:16px;width:1px;background:var(--line)"></div>
       <div style="font-size:13px;color:var(--mut)">Questions are welcome — that's the best part of the meeting.</div>
     </div>
