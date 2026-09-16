@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rhino — School Bus Management System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070B14;
+    --ink:#0B1220;
+    --panel:#101A2C;
+    --panel2:#16233A;
+    --line:rgba(255,255,255,.10);
+    --line2:rgba(255,255,255,.06);
+    --txt:#EAF0FA;
+    --mut:#93A3BE;
+    --dim:#65748F;
+    --amb:#FFB020;
+    --amb2:#FFD37A;
+    --grn:#34D399;
+    --red:#FB7185;
+    --blu:#60A5FA;
+    --vio:#A78BFA;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--bg);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    color:var(--txt);
+    overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+    -webkit-font-smoothing:antialiased;
+  }
+  #stage{
+    width:1280px;height:720px;
+    position:relative;
+    transform-origin:center center;
+    flex:none;
+  }
+  .slide{
+    position:absolute;inset:0;
+    background:linear-gradient(160deg,#0A1120 0%,#070B14 60%,#0A1322 100%);
+    border-radius:18px;
+    overflow:hidden;
+    opacity:0;pointer-events:none;
+    transition:opacity .38s ease;
+    display:flex;flex-direction:column;
+    box-shadow:0 40px 120px rgba(0,0,0,.6);
+  }
+  .slide.on{opacity:1;pointer-events:auto}
+  .slide.on .rise{animation:rise .55s cubic-bezier(.2,.7,.3,1) both}
+  .slide.on .rise:nth-child(2){animation-delay:.05s}
+  .slide.on .rise:nth-child(3){animation-delay:.1s}
+  .slide.on .rise:nth-child(4){animation-delay:.15s}
+  @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+  /* ---------- chrome ---------- */
+  .pad{padding:44px 56px 52px}
+  .kick{
+    font-size:11px;letter-spacing:.20em;text-transform:uppercase;
+    color:var(--amb);font-weight:600;display:flex;align-items:center;gap:10px;
+  }
+  .kick::before{content:"";width:22px;height:1px;background:var(--amb);display:block}
+  h1{font-size:54px;line-height:1.06;font-weight:700;letter-spacing:-.02em}
+  h2{font-size:34px;line-height:1.14;font-weight:700;letter-spacing:-.015em}
+  h3{font-size:19px;font-weight:600;letter-spacing:-.01em}
+  p{color:var(--mut);font-size:15px;line-height:1.6}
+  .lead{font-size:17px;color:#C3D0E4;line-height:1.62}
+  .foot{
+    position:absolute;left:56px;right:56px;bottom:20px;
+    display:flex;justify-content:space-between;align-items:center;
+    font-size:11px;color:var(--dim);letter-spacing:.05em;
+  }
+  .glow{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none}
+
+  /* ---------- reusable ---------- */
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:999px}
+  .p-ok{background:rgba(52,211,153,.14);color:var(--grn)}
+  .p-warn{background:rgba(255,176,32,.15);color:var(--amb)}
+  .p-bad{background:rgba(251,113,133,.15);color:var(--red)}
+  .p-info{background:rgba(96,165,250,.15);color:var(--blu)}
+  .p-idle{background:rgba(255,255,255,.07);color:var(--mut)}
+  .dot{width:6px;height:6px;border-radius:50%;background:currentColor;display:block}
+
+  /* ---------- app mockup shell ---------- */
+  .app{
+    flex:1;display:flex;margin:0 40px 40px;border:1px solid var(--line);
+    border-radius:14px;overflow:hidden;background:var(--ink);position:relative;
+    box-shadow:0 30px 70px rgba(0,0,0,.45);
+  }
+  .side{width:186px;flex:none;background:#0C1524;border-right:1px solid var(--line2);padding:16px 12px;display:flex;flex-direction:column}
+  .brandbox{display:flex;align-items:center;gap:9px;padding:6px 8px 16px}
+  .logo{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--amb),#FF8A00);display:flex;align-items:center;justify-content:center;font-size:14px}
+  .brandbox b{font-size:13px;letter-spacing:-.01em}
+  .navlbl{font-size:9px;letter-spacing:.16em;color:var(--dim);text-transform:uppercase;padding:12px 10px 6px;font-weight:600}
+  .nav{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;font-size:12px;color:var(--mut);margin-bottom:2px}
+  .nav i{font-style:normal;width:15px;text-align:center;font-size:12px;opacity:.9}
+  .nav.act{background:rgba(255,176,32,.13);color:var(--amb2);font-weight:600}
+  .main{flex:1;display:flex;flex-direction:column;min-width:0;background:linear-gradient(180deg,#0B1322,#0A1020)}
+  .top{height:50px;flex:none;border-bottom:1px solid var(--line2);display:flex;align-items:center;justify-content:space-between;padding:0 18px}
+  .top h4{font-size:14px;font-weight:600}
+  .top .sub{font-size:10px;color:var(--dim);margin-top:1px}
+  .search{background:#0D1728;border:1px solid var(--line2);border-radius:7px;padding:5px 10px;font-size:10.5px;color:var(--dim);width:172px}
+  .avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#60A5FA,#A78BFA);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#0B1220}
+  .btn{background:var(--amb);color:#20160A;font-size:10.5px;font-weight:700;padding:6px 12px;border-radius:7px;white-space:nowrap}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--mut);font-weight:500}
+  .body{flex:1;padding:16px 18px;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+
+  table{width:100%;border-collapse:collapse;font-size:11.5px}
+  th{
+    text-align:left;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);
+    font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line2);
+  }
+  td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.045);color:#C9D6EA}
+  tr.hl td{background:rgba(255,176,32,.055)}
+  td b{color:#fff;font-weight:600}
+  .mono{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:10.5px;letter-spacing:.02em;color:#9FB2CC}
+
+  .kpi{background:#0E1828;border:1px solid var(--line2);border-radius:10px;padding:12px 14px}
+  .kpi .n{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1}
+  .kpi .l{font-size:9.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;margin-top:6px;font-weight:600}
+
+  .fld{margin-bottom:12px}
+  .fld label{display:block;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);font-weight:600;margin-bottom:5px}
+  .inp{background:#0D1728;border:1px solid var(--line2);border-radius:7px;padding:8px 10px;font-size:11.5px;color:#DCE7F7}
+  .inp.focus{border-color:var(--amb);box-shadow:0 0 0 3px rgba(255,176,32,.14)}
+  .inp.sel::after{content:"▾";float:right;color:var(--dim);font-size:9px}
+  .hint{font-size:9.5px;color:var(--dim);margin-top:5px;line-height:1.4}
+
+  .cap{
+    position:absolute;background:rgba(255,176,32,.96);color:#1A1205;font-size:10.5px;font-weight:700;
+    padding:5px 11px;border-radius:7px;box-shadow:0 8px 24px rgba(0,0,0,.45);letter-spacing:.01em;white-space:nowrap;z-index:5;top:0;left:-9999px;
+  }
+  .cap.blue{background:rgba(96,165,250,.96);color:#06121F}
+  .cap::after{content:"";position:absolute;width:8px;height:8px;background:inherit;transform:rotate(45deg)}
+  .cap.dn::after{bottom:-4px;left:18px}
+  .cap.up::after{top:-4px;left:18px}
+  .cap.lf::after{left:-4px;top:calc(50% - 4px)}
+  .cap.rt::after{right:-4px;top:calc(50% - 4px)}
+
+  /* ---------- nav dots ---------- */
+  #hud{
+    position:fixed;bottom:16px;left:50%;transform:translateX(-50%);
+    display:flex;align-items:center;gap:14px;z-index:99;
+    background:rgba(12,18,32,.86);border:1px solid var(--line);border-radius:999px;
+    padding:8px 16px;backdrop-filter:blur(10px);
+  }
+  #hud button{background:none;border:none;color:var(--mut);cursor:pointer;font-size:14px;line-height:1;padding:2px 4px}
+  #hud button:hover{color:var(--amb)}
+  #dots{display:flex;gap:5px}
+  #dots span{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.22);cursor:pointer;transition:.2s}
+  #dots span.on{background:var(--amb);width:16px;border-radius:3px}
+  #num{font-size:10.5px;color:var(--dim);font-variant-numeric:tabular-nums;min-width:38px;text-align:center}
+  @media print{#hud{display:none}}
+</style>
+</head>
+<body>
+<div id="stage">
+
+<!-- ============ 1. COVER ============ -->
+<section class="slide">
+  <div class="glow" style="width:620px;height:620px;background:rgba(255,176,32,.16);top:-220px;right:-160px"></div>
+  <div class="glow" style="width:460px;height:460px;background:rgba(96,165,250,.13);bottom:-200px;left:-120px"></div>
+  <div class="pad" style="flex:1;display:flex;flex-direction:column;justify-content:center;position:relative">
+    <div class="rise kick">Private &amp; Confidential · Prepared 2026</div>
+    <h1 class="rise" style="margin-top:26px;max-width:880px">
+      This presentation is<br>built for <span style="color:var(--amb)">Rhino</span>.
+    </h1>
+    <p class="rise lead" style="margin-top:24px;max-width:600px">
+      Not a generic demo. Everything on the next pages is shaped around how
+      <b style="color:#fff;font-weight:600">Rhino Cleaning Services</b> would actually run a school bus operation —
+      your buses, your drivers, your routes.
+    </p>
+    <div class="rise" style="margin-top:44px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+      <span class="pill p-warn"><span class="dot"></span>School Bus Management System</span>
+      <span class="pill p-idle">Bus Master</span>
+      <span class="pill p-idle">Driver Master</span>
+      <span class="pill p-idle">Route Assignment</span>
+    </div>
+  </div>
+  <div class="foot"><span>PREPARED FOR RHINO CLEANING SERVICES</span><span>01</span></div>
+</section>
+
+<!-- ============ 2. ABOUT US ============ -->
+<section class="slide">
+  <div class="glow" style="width:520px;height:520px;background:rgba(96,165,250,.10);top:-200px;left:40%"></div>
+  <div class="pad" style="flex:1;display:flex;flex-direction:column;justify-content:center;position:relative">
+    <div class="rise kick">Who you are talking to</div>
+    <h2 class="rise" style="margin-top:16px;max-width:760px">We build business software for UAE companies — and we stay after go-live.</h2>
+    <p class="rise lead" style="margin-top:14px;max-width:780px">
+      We design and deliver systems that replace spreadsheets, WhatsApp groups and paper files with one
+      place your team can trust. Built in the UAE, for how business is actually done here.
+    </p>
+    <div class="rise" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:30px">
+      <div class="card" style="padding:18px">
+        <div style="font-size:22px;margin-bottom:10px">🇦🇪</div>
+        <h3>UAE-based team</h3>
+        <p style="font-size:13px;margin-top:6px">Same time zone, same working week. We sit with you, not on a ticket queue overseas.</p>
+      </div>
+      <div class="card" style="padding:18px">
+        <div style="font-size:22px;margin-bottom:10px">🏗️</div>
+        <h3>Built for operations</h3>
+        <p style="font-size:13px;margin-top:6px">Construction, trading, manufacturing and services. Assets, people, jobs, documents, compliance.</p>
+      </div>
+      <div class="card" style="padding:18px">
+        <div style="font-size:22px;margin-bottom:10px">🧩</div>
+        <h3>Made to fit you</h3>
+        <p style="font-size:13px;margin-top:6px">We shape the system around your process — we don't force your team into someone else's.</p>
+      </div>
+      <div class="card" style="padding:18px">
+        <div style="font-size:22px;margin-bottom:10px">🤝</div>
+        <h3>Support that answers</h3>
+        <p style="font-size:13px;margin-top:6px">Training, handholding in the first weeks, and a number that picks up after go-live.</p>
+      </div>
+    </div>
+    <div class="rise" style="margin-top:26px;display:flex;gap:44px;padding:18px 24px;background:rgba(255,255,255,.03);border:1px solid var(--line2);border-radius:12px">
+      <div><div style="font-size:26px;font-weight:700;color:var(--amb)">One place</div><div style="font-size:11.5px;color:var(--dim);margin-top:3px">for buses, drivers and routes</div></div>
+      <div><div style="font-size:26px;font-weight:700;color:var(--amb)">Any device</div><div style="font-size:11.5px;color:var(--dim);margin-top:3px">laptop, tablet or phone</div></div>
+      <div><div style="font-size:26px;font-weight:700;color:var(--amb)">Your data</div><div style="font-size:11.5px;color:var(--dim);margin-top:3px">yours, exportable to Excel anytime</div></div>
+    </div>
+  </div>
+  <div class="foot"><span>ABOUT US</span><span>02</span></div>
+</section>
+
+<!-- ============ 3. THE PROBLEM ============ -->
+<section class="slide">
+  <div class="pad" style="flex:1;display:flex;flex-direction:column;justify-content:center">
+    <div class="rise kick">Where it hurts today</div>
+    <h2 class="rise" style="margin-top:16px;max-width:820px">Right now the bus operation lives in five different places.</h2>
+    <div class="rise" style="display:grid;grid-template-columns:1fr 1fr;gap:34px;margin-top:30px">
+      <div>
+        <div style="display:flex;flex-direction:column;gap:11px">
+          <div class="card" style="padding:14px 18px;display:flex;gap:14px;align-items:flex-start">
+            <span style="font-size:18px">📄</span>
+            <div><h3 style="font-size:15px">Bus details in an Excel sheet</h3>
+            <p style="font-size:12.5px;margin-top:3px">Chassis number, plate, insurance date — and three versions of the same file floating around.</p></div>
+          </div>
+          <div class="card" style="padding:14px 18px;display:flex;gap:14px;align-items:flex-start">
+            <span style="font-size:18px">🗂️</span>
+            <div><h3 style="font-size:15px">Driver files in a cabinet</h3>
+            <p style="font-size:12.5px;margin-top:3px">Licence and visa copies in folders. Nobody knows what expires next month until it's already expired.</p></div>
+          </div>
+          <div class="card" style="padding:14px 18px;display:flex;gap:14px;align-items:flex-start">
+            <span style="font-size:18px">💬</span>
+            <div><h3 style="font-size:15px">Route changes on WhatsApp</h3>
+            <p style="font-size:12.5px;margin-top:3px">"Today Ramesh takes Bus 7." Fine — until someone is on leave and nobody remembers who covered.</p></div>
+          </div>
+          <div class="card" style="padding:14px 18px;display:flex;gap:14px;align-items:flex-start">
+            <span style="font-size:18px">🖊️</span>
+            <div><h3 style="font-size:15px">Trip records on paper</h3>
+            <p style="font-size:12.5px;margin-top:3px">The school asks a question about last Tuesday. You spend an afternoon looking for the answer.</p></div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;justify-content:center">
+        <div class="card" style="border-color:rgba(251,113,133,.3);background:rgba(251,113,133,.06)">
+          <div class="pill p-bad" style="margin-bottom:12px"><span class="dot"></span>What it costs you</div>
+          <div style="display:flex;flex-direction:column;gap:13px">
+            <div><b style="font-size:14px">Fines and blocked buses</b><p style="font-size:12.5px;margin-top:2px">An expired registration or licence found on the road, not in the office.</p></div>
+            <div><b style="font-size:14px">Morning panic</b><p style="font-size:12.5px;margin-top:2px">A driver calls in sick at 5:40am and nobody has a clean list of who is free.</p></div>
+            <div><b style="font-size:14px">No proof</b><p style="font-size:12.5px;margin-top:2px">When the school complains, you have a story — not a record.</p></div>
+            <div><b style="font-size:14px">One person holds it all</b><p style="font-size:12.5px;margin-top:2px">If your supervisor takes leave, the knowledge takes leave with him.</p></div>
+          </div>
+        </div>
+        <p class="lead" style="margin-top:20px;font-size:15px">
+          None of this is a people problem. It's a <b style="color:var(--amb);font-weight:600">system problem</b> — and it's fixable.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>THE SITUATION TODAY</span><span>03</span></div>
+</section>
+
+<!-- ============ 4. THE IDEA ============ -->
+<section class="slide">
+  <div class="glow" style="width:560px;height:560px;background:rgba(255,176,32,.09);bottom:-260px;right:-120px"></div>
+  <div class="pad" style="flex:1;display:flex;flex-direction:column;justify-content:center;position:relative">
+    <div class="rise kick">The whole idea in one page</div>
+    <h2 class="rise" style="margin-top:16px;max-width:880px">Three lists that talk to each other. That's the entire system.</h2>
+    <p class="rise lead" style="margin-top:12px;max-width:760px">
+      You enter each bus once. You enter each driver once. Then you simply connect them on a routes sheet —
+      and the system keeps the whole picture updated for you.
+    </p>
+
+    <div class="rise" style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:16px;align-items:stretch;margin-top:34px">
+      <div class="card" style="border-color:rgba(96,165,250,.35)">
+        <div style="font-size:24px">🚌</div>
+        <h3 style="margin-top:12px;color:var(--blu)">1 · Bus Master</h3>
+        <p style="font-size:13px;margin-top:8px">Every bus entered once — plate, chassis number, model, seats, insurance and registration dates, owner.</p>
+        <div style="margin-top:14px;font-size:11.5px;color:var(--dim);line-height:1.9">
+          Bus Code · Plate No.<br>Chassis No. · Engine No.<br>Seats · Insurance expiry
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;font-size:24px;color:var(--amb)">→</div>
+      <div class="card" style="border-color:rgba(167,139,250,.35)">
+        <div style="font-size:24px">👨‍✈️</div>
+        <h3 style="margin-top:12px;color:var(--vio)">2 · Driver Master</h3>
+        <p style="font-size:13px;margin-top:8px">Every driver entered once — licence, visa, medical, contact, and which buses he is allowed to drive.</p>
+        <div style="margin-top:14px;font-size:11.5px;color:var(--dim);line-height:1.9">
+          Driver Code · Emirates ID<br>Licence No. + expiry<br>Visa expiry · Phone
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;font-size:24px;color:var(--amb)">→</div>
+      <div class="card" style="border-color:rgba(255,176,32,.45);background:rgba(255,176,32,.06)">
+        <div style="font-size:24px">🗺️</div>
+        <h3 style="margin-top:12px;color:var(--amb)">3 · Route Assignment</h3>
+        <p style="font-size:13px;margin-top:8px">One clean sheet: this route, this bus, this driver, this attendant — morning and afternoon.</p>
+        <div style="margin-top:14px;font-size:11.5px;color:var(--dim);line-height:1.9">
+          Route · School · Timing<br>Bus + Driver + Attendant<br>Students on board
+        </div>
+      </div>
+    </div>
+
+    <div class="rise" style="margin-top:28px;padding:16px 22px;border:1px dashed rgba(255,176,32,.35);border-radius:12px;background:rgba(255,176,32,.04)">
+      <p style="font-size:14.5px;color:#DCE7F7">
+        <b style="color:var(--amb)">The payoff:</b> because the three are linked, the system can warn you before something goes wrong —
+        an expiring licence, a bus with no driver tomorrow, a route left uncovered.
+      </p>
+    </div>
+  </div>
+  <div class="foot"><span>WHAT WE ARE PROPOSING</span><span>04</span></div>
+</section>
+
+<!-- ============ 5. UI: DASHBOARD ============ -->
+<section class="slide">
+  <div class="pad" style="padding:34px 40px 14px">
+    <div class="kick">Screen 1 · The morning screen</div>
+    <h2 style="margin-top:10px;font-size:27px">Open the laptop. See the whole fleet in five seconds.</h2>
+  </div>
+  <div class="app">
+    <aside class="side">
+      <div class="brandbox"><div class="logo">🚌</div><b>Rhino Fleet</b></div>
+      <div class="navlbl">Main</div>
+      <div class="nav act"><i>▦</i>Dashboard</div>
+      <div class="nav"><i>🚌</i>Bus Master</div>
+      <div class="nav"><i>👤</i>Driver Master</div>
+      <div class="nav"><i>🗺️</i>Routes</div>
+      <div class="nav"><i>📋</i>Daily Trips</div>
+      <div class="navlbl">Records</div>
+      <div class="nav"><i>🎓</i>Students</div>
+      <div class="nav"><i>🔔</i>Alerts</div>
+      <div class="nav"><i>📊</i>Reports</div>
+      <div style="margin-top:auto;padding:10px;border-top:1px solid var(--line2)">
+        <div style="font-size:9.5px;color:var(--dim);line-height:1.6">Al Ain Branch<br><span style="color:var(--mut)">Tue, 16 Sep · 06:12 AM</span></div>
+      </div>
+    </aside>
+    <div class="main">
+      <div class="top">
+        <div><h4>Good morning, Rhino</h4><div class="sub">Everything you need before the first bus leaves the yard</div></div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="search">Search bus, driver or route…</div>
+          <div class="btn">+ New Trip Sheet</div>
+          <div class="avatar">RC</div>
+        </div>
+      </div>
+      <div class="body">
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px">
+          <div class="kpi"><div class="n">42</div><div class="l">Buses</div></div>
+          <div class="kpi"><div class="n" style="color:var(--grn)">38</div><div class="l">On the road</div></div>
+          <div class="kpi"><div class="n" style="color:var(--amb)">3</div><div class="l">In workshop</div></div>
+          <div class="kpi"><div class="n">47</div><div class="l">Drivers</div></div>
+          <div class="kpi" style="border-color:rgba(251,113,133,.4);background:rgba(251,113,133,.07)"><div class="n" style="color:var(--red)">5</div><div class="l">Need attention</div></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.55fr 1fr;gap:12px;margin-top:12px;flex:1;min-height:0">
+          <div style="background:#0E1828;border:1px solid var(--line2);border-radius:10px;overflow:hidden;flex:1;min-height:0">
+            <div style="padding:10px 12px;border-bottom:1px solid var(--line2);display:flex;justify-content:space-between;align-items:center">
+              <b style="font-size:12px">This morning's routes</b><span style="font-size:10px;color:var(--dim)">Showing 5 of 34</span>
+            </div>
+            <table>
+              <tr><th>Route</th><th>Bus</th><th>Driver</th><th>Attendant</th><th>Status</th></tr>
+              <tr><td><b>R-01</b> Al Jimi</td><td class="mono">AUH 41287</td><td>Ramesh K.</td><td>Sneha M.</td><td><span class="pill p-ok"><span class="dot"></span>Departed</span></td></tr>
+              <tr><td><b>R-02</b> Al Muwaiji</td><td class="mono">AUH 55910</td><td>Abdul R.</td><td>Fatima A.</td><td><span class="pill p-ok"><span class="dot"></span>Departed</span></td></tr>
+              <tr class="hl"><td><b>R-03</b> Zakher</td><td class="mono">AUH 63044</td><td style="color:var(--amb)">— not assigned</td><td>Reena P.</td><td><span class="pill p-warn"><span class="dot"></span>Needs driver</span></td></tr>
+              <tr><td><b>R-04</b> Falaj Hazza</td><td class="mono">AUH 20118</td><td>Sunil V.</td><td>Mary J.</td><td><span class="pill p-info"><span class="dot"></span>Loading</span></td></tr>
+              <tr><td><b>R-05</b> Town Centre</td><td class="mono">AUH 77420</td><td>Nasser H.</td><td>Aisha K.</td><td><span class="pill p-idle"><span class="dot"></span>Yard</span></td></tr>
+            </table>
+          </div>
+
+          <div style="background:#0E1828;border:1px solid var(--line2);border-radius:10px;overflow:hidden;flex:1;min-height:0">
+            <div style="padding:10px 12px;border-bottom:1px solid var(--line2)"><b style="font-size:12px">Needs your attention</b></div>
+            <div style="padding:10px 12px;display:flex;flex-direction:column;gap:9px">
+              <div id="a5" style="display:flex;gap:9px;align-items:flex-start"><span class="pill p-bad" style="flex:none">7 days</span><div><div style="font-size:11.5px;color:#E3EBF7">Driver licence expiring</div><div style="font-size:10px;color:var(--dim);margin-top:1px">Abdul Rahman · Lic 8842190</div></div></div>
+              <div style="display:flex;gap:9px;align-items:flex-start"><span class="pill p-bad" style="flex:none">12 days</span><div><div style="font-size:11.5px;color:#E3EBF7">Bus insurance expiring</div><div style="font-size:10px;color:var(--dim);margin-top:1px">AUH 63044 · Policy MOT-7719</div></div></div>
+              <div style="display:flex;gap:9px;align-items:flex-start"><span class="pill p-warn" style="flex:none">Today</span><div><div style="font-size:11.5px;color:#E3EBF7">Route R-03 has no driver</div><div style="font-size:10px;color:var(--dim);margin-top:1px">Morning shift · 21 students</div></div></div>
+              <div style="display:flex;gap:9px;align-items:flex-start"><span class="pill p-warn" style="flex:none">Due</span><div><div style="font-size:11.5px;color:#E3EBF7">Service due — 5,000 km over</div><div style="font-size:10px;color:var(--dim);margin-top:1px">AUH 20118 · Last service 12 Jun</div></div></div>
+              <div style="display:flex;gap:9px;align-items:flex-start"><span class="pill p-info" style="flex:none">Leave</span><div><div style="font-size:11.5px;color:#E3EBF7">Sunil V. on leave from 22 Sep</div><div style="font-size:10px;color:var(--dim);margin-top:1px">Cover needed for R-04</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cap" data-for="a5" data-pos="left">The system tells you what's wrong — you don't go hunting</div>
+  </div>
+</section>
+
+<!-- ============ 6. UI: BUS MASTER LIST ============ -->
+<section class="slide">
+  <div class="pad" style="padding:34px 40px 14px">
+    <div class="kick">Screen 2 · Bus Master</div>
+    <h2 style="margin-top:10px;font-size:27px">Every bus you own, entered once — with its chassis number on file.</h2>
+  </div>
+  <div class="app">
+    <aside class="side">
+      <div class="brandbox"><div class="logo">🚌</div><b>Rhino Fleet</b></div>
+      <div class="navlbl">Main</div>
+      <div class="nav"><i>▦</i>Dashboard</div>
+      <div class="nav act"><i>🚌</i>Bus Master</div>
+      <div class="nav"><i>👤</i>Driver Master</div>
+      <div class="nav"><i>🗺️</i>Routes</div>
+      <div class="nav"><i>📋</i>Daily Trips</div>
+      <div class="navlbl">Records</div>
+      <div class="nav"><i>🎓</i>Students</div>
+      <div class="nav"><i>🔔</i>Alerts</div>
+      <div class="nav"><i>📊</i>Reports</div>
+    </aside>
+    <div class="main">
+      <div class="top">
+        <div><h4>Bus Master</h4><div class="sub">42 buses · 38 active · 3 in workshop · 1 sold</div></div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="search">Search plate or chassis…</div>
+          <div class="btn ghost">⬇ Export to Excel</div>
+          <div class="btn">+ Add Bus</div>
+        </div>
+      </div>
+      <div class="body">
+        <div style="display:flex;gap:7px;margin-bottom:11px">
+          <span class="pill p-warn">All buses</span>
+          <span class="pill p-idle">Active</span>
+          <span class="pill p-idle">In workshop</span>
+          <span class="pill p-idle">Insurance expiring</span>
+          <span class="pill p-idle">Unassigned</span>
+        </div>
+        <div style="background:#0E1828;border:1px solid var(--line2);border-radius:10px;overflow:hidden;flex:1;min-height:0">
+          <table>
+            <tr>
+              <th style="width:74px">Bus Code</th><th>Plate No.</th><th>Chassis Number</th><th>Make / Model</th>
+              <th style="width:52px">Seats</th><th>Assigned Driver</th><th>Route</th><th>Insurance</th><th>Status</th>
+            </tr>
+            <tr><td><b>BUS-001</b></td><td class="mono">AUH 41287</td><td class="mono">JTEHH20V106051384</td><td>Toyota Coaster 2021</td><td>30</td><td>Ramesh K.</td><td>R-01</td><td><span class="pill p-ok">14 Mar 27</span></td><td><span class="pill p-ok"><span class="dot"></span>Active</span></td></tr>
+            <tr><td><b>BUS-002</b></td><td class="mono">AUH 55910</td><td class="mono">JTGFB518X01008812</td><td>Toyota Hiace 2022</td><td>15</td><td>Abdul R.</td><td>R-02</td><td><span class="pill p-ok">02 Jan 27</span></td><td><span class="pill p-ok"><span class="dot"></span>Active</span></td></tr>
+            <tr class="hl"><td><b>BUS-003</b></td><td class="mono">AUH 63044</td><td class="mono">LZGJLSR41KX051229</td><td>King Long XMQ 2020</td><td>45</td><td style="color:var(--amb)">— not assigned</td><td>R-03</td><td><span class="pill p-bad">28 Sep 26</span></td><td><span class="pill p-warn"><span class="dot"></span>Check</span></td></tr>
+            <tr><td><b>BUS-004</b></td><td class="mono">AUH 20118</td><td class="mono">JTEHH20V206073991</td><td>Toyota Coaster 2019</td><td>30</td><td>Sunil V.</td><td>R-04</td><td><span class="pill p-ok">19 May 27</span></td><td><span class="pill p-ok"><span class="dot"></span>Active</span></td></tr>
+            <tr><td><b>BUS-005</b></td><td class="mono">AUH 77420</td><td class="mono">WDB9066571S334107</td><td>Mercedes Sprinter 2023</td><td>22</td><td>Nasser H.</td><td>R-05</td><td><span class="pill p-ok">07 Aug 27</span></td><td><span class="pill p-ok"><span class="dot"></span>Active</span></td></tr>
+            <tr><td><b>BUS-006</b></td><td class="mono">AUH 31866</td><td class="mono">LZGJLSR47LX062554</td><td>King Long XMQ 2021</td><td>45</td><td>—</td><td>—</td><td><span class="pill p-ok">11 Nov 26</span></td><td><span class="pill p-info"><span class="dot"></span>Workshop</span></td></tr>
+            <tr><td><b>BUS-007</b></td><td class="mono">AUH 90233</td><td class="mono" id="a6">JTGFB518X01014470</td><td>Toyota Hiace 2022</td><td>15</td><td>Imran S.</td><td>R-07</td><td><span class="pill p-warn">30 Oct 26</span></td><td><span class="pill p-ok"><span class="dot"></span>Active</span></td></tr>
+          </table>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:9px;font-size:10px;color:var(--dim)">
+          <span>Showing 1–7 of 42</span><span>Click any row to open the full bus file</span>
+        </div>
+      </div>
+    </div>
+    <div class="cap blue" data-for="a6" data-pos="below">Chassis number stored against every bus — search half of it and it comes up</div>
+  </div>
+</section>
+
+<!-- ============ 7. UI: ADD BUS FORM ============ -->
+<section class="slide">
+  <div class="pad" style="padding:34px 40px 14px">
+    <div class="kick">Screen 3 · Adding a bus</div>
+    <h2 style="margin-top:10px;font-size:27px">One simple form. Fill it once, and you never chase these details again.</h2>
+  </div>
+  <div class="app">
+    <aside class="side">
+      <div class="brandbox"><div class="logo">🚌</div><b>Rhino Fleet</b></div>
+      <div class="navlbl">Main</div>
+      <div class="nav"><i>▦</i>Dashboard</div>
+      <div class="nav act"><i>🚌</i>Bus Master</div>
+      <div class="nav"><i>👤</i>Driver Master</div>
+      <div class="nav"><i>🗺️</i>Routes</div>
+      <div class="nav"><i>📋</i>Daily Trips</div>
+      <div class="navlbl">Records</div>
+      <div class="nav"><i>🎓</i>Students</div>
+      <div class="nav"><i>🔔</i>Alerts</div>
+      <div class="nav"><i>📊</i>Reports</div>
+    </aside>
+    <div class="main">
+      <div class="top">
+        <div><h4>Bus Master › Add New Bus</h4><div class="sub">Step 1 of 3 · Vehicle details</div></div>
+        <div style="display:flex;align-items:center;gap:8px"><div class="btn ghost">Cancel</div><div class="btn">Save &amp; Continue</div></div>
+      </div>
+      <div class="body" style="padding:14px 18px">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+
+          <div>
+            <div style="font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--amb);font-weight:700;margin-bottom:11px">① Identity</div>
+            <div class="fld"><label>Bus Code</label><div class="inp mono">BUS-008</div><div class="hint">Created automatically</div></div>
+            <div class="fld"><label>Plate Number</label><div class="inp mono">AUH 48119</div></div>
+            <div class="fld"><label>Chassis Number (VIN)</label><div class="inp mono focus">JTEHH20V906082217</div><div class="hint">17 characters — the system checks the format and blocks duplicates</div></div>
+            <div class="fld"><label>Engine Number</label><div class="inp mono" id="a7">1KD-7734902</div></div>
+          </div>
+
+          <div>
+            <div style="font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--amb);font-weight:700;margin-bottom:11px">② Vehicle</div>
+            <div class="fld"><label>Make</label><div class="inp sel">Toyota</div></div>
+            <div class="fld"><label>Model &amp; Year</label><div class="inp">Coaster · 2023</div></div>
+            <div class="fld"><label>Seating Capacity</label><div class="inp">30 seats + 1 attendant</div></div>
+            <div class="fld"><label>Colour / Body</label><div class="inp">School Yellow</div></div>
+            <div class="fld"><label>Odometer Reading</label><div class="inp">64,210 km</div></div>
+          </div>
+
+          <div>
+            <div style="font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--amb);font-weight:700;margin-bottom:11px">③ Papers &amp; ownership</div>
+            <div class="fld"><label>Registration (Mulkiya) Expiry</label><div class="inp">12 / 04 / 2027</div></div>
+            <div class="fld"><label>Insurance Company &amp; Expiry</label><div class="inp">Oman Insurance · 07 / 08 / 2027</div></div>
+            <div class="fld"><label>Owned By</label><div class="inp sel">Rhino Cleaning Services LLC</div></div>
+            <div class="fld"><label>Attach Documents</label>
+              <div class="inp" style="border-style:dashed;text-align:center;color:var(--dim);padding:12px">📎 Drop Mulkiya, insurance, photos here</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:auto;padding:11px 14px;border-radius:9px;background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.28);display:flex;gap:10px;align-items:center">
+          <span style="font-size:14px">✅</span>
+          <div style="font-size:11.5px;color:#C9E9DC">Because you entered the expiry dates, the system will remind you <b style="color:#fff">60, 30 and 7 days before</b> each one — by email and on screen. No calendar to maintain.</div>
+        </div>
+      </div>
+    </div>
+    <div class="cap" data-for="a7" data-pos="below">Every number you will ever be asked for — kept in one place</div>
+  </div>
+</section>
+
+<!-- ============ 8. UI: DRIVER MASTER ============ -->
+<section class="slide">
+  <div class="pad" style="padding:34px 40px 14px">
+    <div class="kick">Screen 4 · Driver Master</div>
+    <h2 style="margin-top:10px;font-size:27px">A separate list for your drivers — kept clean, kept legal.</h2>
+  </div>
+  <div class="app">
+    <aside class="side">
+      <div class="brandbox"><div class="logo">🚌</div><b>Rhino Fleet</b></div>
+      <div class="navlbl">Main</div>
+      <div class="nav"><i>▦</i>Dashboard</div>
+      <div class="nav"><i>🚌</i>Bus Master</div>
+      <div class="nav act"><i>👤</i>Driver Master</div>
+      <div class="nav"><i>🗺️</i>Routes</div>
+      <div class="nav"><i>📋</i>Daily Trips</div>
+      <div class="navlbl">Records</div>
+      <div class="nav"><i>🎓</i>Students</div>
+      <div class="nav"><i>🔔</i>Alerts</div>
+      <div class="nav"><i>📊</i>Reports</div>
+    </aside>
+    <div class="main">
+      <div class="top">
+        <div><h4>Driver Master</h4><div class="sub">47 drivers · 41 on duty · 4 on leave · 2 documents expiring</div></div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="search">Search name, licence or code…</div>
+          <div class="btn ghost">⬇ Export</div>
+          <div class="btn">+ Add Driver</div>
+        </div>
+      </div>
+      <div class="body">
+        <div style="display:flex;gap:7px;margin-bottom:11px">
+          <span class="pill p-warn">All drivers</span>
+          <span class="pill p-idle">Available today</span>
+          <span class="pill p-idle">On leave</span>
+          <span class="pill p-idle">Licence expiring</span>
+          <span class="pill p-idle">Unassigned</span>
+        </div>
+        <div style="background:#0E1828;border:1px solid var(--line2);border-radius:10px;overflow:hidden;flex:1;min-height:0">
+          <table>
+            <tr>
+              <th style="width:72px">Code</th><th>Driver Name</th><th>Mobile</th><th>Licence No.</th><th>Licence Expiry</th>
+              <th>Visa Expiry</th><th>Bus Assigned</th><th>Route</th><th>Status</th>
+            </tr>
+            <tr><td><b>DRV-01</b></td><td><b>Ramesh Kumar</b></td><td class="mono">050 442 8871</td><td class="mono">7714029</td><td><span class="pill p-ok">21 Jun 28</span></td><td><span class="pill p-ok">03 Mar 28</span></td><td class="mono">AUH 41287</td><td>R-01</td><td><span class="pill p-ok"><span class="dot"></span>On duty</span></td></tr>
+            <tr class="hl"><td><b>DRV-02</b></td><td><b>Abdul Rahman</b></td><td class="mono">052 119 3306</td><td class="mono">8842190</td><td><span class="pill p-bad">23 Sep 26</span></td><td><span class="pill p-ok">14 Dec 27</span></td><td class="mono">AUH 55910</td><td>R-02</td><td><span class="pill p-warn"><span class="dot"></span>Renew licence</span></td></tr>
+            <tr><td><b>DRV-03</b></td><td><b>Sunil Varghese</b></td><td class="mono">055 803 7742</td><td class="mono">6620881</td><td><span class="pill p-ok">09 Feb 29</span></td><td><span class="pill p-ok">30 Jul 28</span></td><td class="mono">AUH 20118</td><td>R-04</td><td><span class="pill p-info"><span class="dot"></span>Leave 22 Sep</span></td></tr>
+            <tr><td><b>DRV-04</b></td><td><b>Nasser Hassan</b></td><td class="mono">056 274 0119</td><td class="mono">9031744</td><td><span class="pill p-ok">17 Oct 27</span></td><td><span class="pill p-ok">22 Apr 28</span></td><td class="mono">AUH 77420</td><td>R-05</td><td><span class="pill p-ok"><span class="dot"></span>On duty</span></td></tr>
+            <tr><td><b>DRV-05</b></td><td><b>Imran Sheikh</b></td><td class="mono">050 663 2298</td><td class="mono">7159803</td><td><span class="pill p-ok">05 May 28</span></td><td><span class="pill p-warn">18 Nov 26</span></td><td class="mono">AUH 90233</td><td>R-07</td><td><span class="pill p-ok"><span class="dot"></span>On duty</span></td></tr>
+            <tr><td><b>DRV-06</b></td><td><b>Joseph Mathew</b></td><td class="mono">054 900 7731</td><td class="mono">8003412</td><td><span class="pill p-ok">28 Jan 29</span></td><td><span class="pill p-ok">11 Sep 28</span></td><td style="color:var(--grn)">— free —</td><td>—</td><td><span class="pill p-ok"><span class="dot"></span>Available</span></td></tr>
+            <tr><td><b>DRV-07</b></td><td><b>Bilal Ahmed</b></td><td class="mono">052 338 9014</td><td class="mono">7726650</td><td><span class="pill p-ok">14 Aug 28</span></td><td><span class="pill p-ok">02 Jun 29</span></td><td id="a8" style="color:var(--grn)">— free —</td><td>—</td><td><span class="pill p-ok"><span class="dot"></span>Available</span></td></tr>
+          </table>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:9px;font-size:10px;color:var(--dim)">
+          <span>Showing 1–7 of 47</span><span>Green means free to be assigned right now</span>
+        </div>
+      </div>
+    </div>
+    <div class="cap" data-for="a8" data-pos="below">At 5:40am you can see instantly who is free to cover</div>
+  </div>
+</section>
+
+<!-- ============ 9. UI: DRIVER FILE ============ -->
+<section class="slide">
+  <div class="pad" style="padding:34px 40px 14px">
+    <div class="kick">Screen 5 · Inside a driver's file</div>
+    <h2 style="margin-top:10px;font-size:27px">The whole file cabinet for one driver — on one screen.</h2>
+  </div>
+  <div class="app">
+    <aside class="side">
+      <div class="brandbox"><div class="logo">🚌</div><b>Rhino Fleet</b></div>
+      <div class="navlbl">Main</div>
+      <div class="nav"><i>▦</i>Dashboard</div>
+      <div class="nav"><i>🚌</i>Bus Master</div>
+      <div class="nav act"><i>👤</i>Driver Master</div>
+      <div class="nav"><i>🗺️</i>Routes</div>
+      <div class="nav"><i>📋</i>Daily Trips</div>
+      <div class="navlbl">Records</div>
+      <div class="nav"><i>🎓</i>Students</div>
+      <div class="nav"><i>🔔</i>Alerts</div>
+      <div class="nav"><i>📊</i>Reports</div>
+    </aside>
+    <div class="main">
+      <div class="top">
+        <div><h4>Driver Master › Ramesh Kumar</h4><div class="sub">DRV-01 · Joined 14 Aug 2022 · Al Ain Branch</div></div>
+        <div style="display:flex;align-items:center;gap:8px"><div class="btn ghost">Print File</div><div class="btn">Edit Driver</div></div>
+      </div>
+      <div class="body" style="padding:14px 18px">
+        <div style="display:grid;grid-template-columns:238px 1fr;gap:14px;flex:1;min-height:0">
+
+          <div style="background:#0E1828;border:1px solid var(--line2);border-radius:10px;padding:16px;text-align:center">
+            <div style="width:62px;height:62px;border-radius:50%;margin:0 auto;background:linear-gradient(135deg,#60A5FA,#A78BFA);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#0B1220">RK</div>
+            <div style="font-size:15px;font-weight:700;margin-top:10px">Ramesh Kumar</div>
+            <div style="font-size:10.5px;color:var(--dim);margin-top:2px">Heavy Bus Licence · 12 yrs experience</div>
+            <div style="margin-top:10px"><span class="pill p-ok"><span class="dot"></span>On duty</span></div>
+            <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line2);text-align:left;display:flex;flex-direction:column;gap:9px">
+              <div><div style="font-size:9px;letter-spacing:.11em;color:var(--dim);text-transform:uppercase">Mobile</div><div class="mono" style="font-size:11.5px;color:#DCE7F7;margin-top:2px">050 442 8871</div></div>
+              <div><div style="font-size:9px;letter-spacing:.11em;color:var(--dim);text-transform:uppercase">Emirates ID</div><div class="mono" style="font-size:11.5px;color:#DCE7F7;margin-top:2px">784-1988-4471902-3</div></div>
+              <div><div style="font-size:9px;letter-spacing:.11em;color:var(--dim);text-transform:uppercase">Nationality</div><div style="font-size:11.5px;color:#DCE7F7;margin-top:2px">Indian</div></div>
+              <div><div style="font-size:9px;letter-spacing:.11em;color:var(--dim);text-transform:uppercase">Blood Group</div><div style="font-size:11.5px;color:#DCE7F7;margin-top:2px">O+</div></div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="background:#0E1828;border:1px solid var(--line2);border-radius:10px;padding:13px 15px">
+              <div style="font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--amb);font-weight:700;margin-bottom:11px">Documents on file</div>
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+                <div style="background:#0C1523;border:1px solid var(--line2);border-radius:8px;padding:10px">
+                  <div style="font-size:10.5px;color:var(--mut)">Driving Licence</div>
+                  <div class="mono" style="font-size:11px;color:#fff;margin-top:3px">7714029</div>
+                  <div style="margin-top:7px"><span class="pill p-ok">Valid to 21 Jun 28</span></div>
+                </div>
+                <div style="background:#0C1523;border:1px solid var(--line2);border-radius:8px;padding:10px">
+                  <div style="font-size:10.5px;color:var(--mut)">Residence Visa</div>
+                  <div class="mono" style="font-size:11px;color:#fff;margin-top:3px">AE-2291837</div>
+                  <div style="margin-top:7px"><span class="pill p-ok">Valid to 03 Mar 28</span></div>
+                </div>
+                <div style="background:#0C1523;border:1px solid var(--line2);border-radius:8px;padding:10px">
+                  <div style="font-size:10.5px;color:var(--mut)">Medical Fitness</div>
+                  <div class="mono" style="font-size:11px;color:#fff;margin-top:3px">MF-88210</div>
+                  <div style="margin-top:7px"><span class="pill p-warn" id="a9">Renew in 41 days</span></div>
+                </div>
+                <div style="background:#0C1523;border:1px solid var(--line2);border-radius:8px;padding:10px">
+                  <div style="font-size:10.5px;color:var(--mut)">Police Clearance</div>
+                  <div class="mono" style="font-size:11px;color:#fff;margin-top:3px">PCC-40117</div>
+                  <div style="margin-top:7px"><span class="pill p-ok">Valid to 09 Nov 27</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1">
+              <div style="background:#0E1828;border:1px solid var(--line2);border-radius:10px;padding:13px 15px;display:flex;flex-direction:column">
+                <div style="font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--blu);font-weight:700;margin-bottom:10px">Buses he is cleared to drive</div>
+                <div style="display:flex;flex-direction:column;gap:7px">
+                  <div style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px"><span class="mono">AUH 41287 · Coaster 30-seat</span><span class="pill p-ok">Primary</span></div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px"><span class="mono">AUH 20118 · Coaster 30-seat</span><span class="pill p-idle">Backup</span></div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px"><span class="mono">AUH 63044 · King Long 45-seat</span><span class="pill p-idle">Backup</span></div>
+                </div>
+                <div class="hint" style="margin-top:10px">The system will not let him be put on a bus he isn't cleared for.</div>
+                <div style="margin-top:auto;padding-top:12px;border-top:1px solid var(--line2);display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+                  <div><div style="font-size:17px;font-weight:700;color:#fff">312</div><div style="font-size:8.5px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase;margin-top:2px">Trips this year</div></div>
+                  <div><div style="font-size:17px;font-weight:700;color:var(--grn)">99.1%</div><div style="font-size:8.5px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase;margin-top:2px">On time</div></div>
+                  <div><div style="font-size:17px;font-weight:700;color:#fff">0</div><div style="font-size:8.5px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase;margin-top:2px">Complaints</div></div>
+                </div>
+              </div>
+              <div style="background:#0E1828;border:1px solid var(--line2);border-radius:10px;padding:13px 15px">
+                <div style="font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--vio);font-weight:700;margin-bottom:10px">Recent history</div>
+                <div style="display:flex;flex-direction:column;gap:8px;font-size:11px;color:var(--mut)">
+                  <div><b style="color:#DCE7F7">16 Sep</b> · R-01 morning trip completed · 06:48</div>
+                  <div><b style="color:#DCE7F7">15 Sep</b> · R-01 morning + afternoon · no issues</div>
+                  <div><b style="color:#DCE7F7">12 Sep</b> · Covered R-06 for Bilal A.</div>
+                  <div><b style="color:#DCE7F7">04 Sep</b> · Safety training attended</div>
+                  <div><b style="color:#DCE7F7">28 Aug</b> · Annual leave returned</div>
+                  <div><b style="color:#DCE7F7">19 Aug</b> · Bus AUH 41287 handed over after service</div>
+                  <div><b style="color:#DCE7F7">11 Aug</b> · Licence renewal completed</div>
+                  <div><b style="color:#DCE7F7">02 Aug</b> · R-01 route timing revised by school</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cap" data-for="a9" data-pos="below">Nothing expires quietly anymore</div>
+  </div>
+</section>
+
+<!-- ============ 10. UI: ROUTE ASSIGNMENT (THE CORE) ============ -->
+<section class="slide">
+  <div class="pad" style="padding:34px 40px 14px">
+    <div class="kick">Screen 6 · The heart of the system</div>
+    <h2 style="margin-top:10px;font-size:27px">Here is where the bus, the driver and the route get tied together.</h2>
+  </div>
+  <div class="app">
+    <aside class="side">
+      <div class="brandbox"><div class="logo">🚌</div><b>Rhino Fleet</b></div>
+      <div class="navlbl">Main</div>
+      <div class="nav"><i>▦</i>Dashboard</div>
+      <div class="nav"><i>🚌</i>Bus Master</div>
+      <div class="nav"><i>👤</i>Driver Master</div>
+      <div class="nav act"><i>🗺️</i>Routes</div>
+      <div class="nav"><i>📋</i>Daily Trips</div>
+      <div class="navlbl">Records</div>
+      <div class="nav"><i>🎓</i>Students</div>
+      <div class="nav"><i>🔔</i>Alerts</div>
+      <div class="nav"><i>📊</i>Reports</div>
+    </aside>
+    <div class="main">
+      <div class="top">
+        <div><h4>Route Assignment Sheet</h4><div class="sub">Al Noor International School · Morning shift · Week of 16 Sep 2026</div></div>
+        <div style="display:flex;align-items:center;gap:9px">
+          <div class="search" style="width:132px">🏫 Al Noor School ▾</div>
+          <div class="btn ghost">Copy last week</div>
+          <div class="btn">Publish Sheet</div>
+        </div>
+      </div>
+      <div class="body">
+        <div style="background:#0E1828;border:1px solid var(--line2);border-radius:10px;overflow:hidden;flex:1;min-height:0">
+          <table>
+            <tr>
+              <th style="width:64px">Route</th><th>Area covered</th><th style="width:60px">Pickup</th>
+              <th>Bus (from Bus Master)</th><th>Driver (from Driver Master)</th><th>Bus Attendant</th>
+              <th style="width:64px">Students</th><th>Check</th>
+            </tr>
+            <tr><td><b>R-01</b></td><td>Al Jimi → Sanaiya</td><td class="mono">05:55</td><td class="mono">AUH 41287 · 30 seats</td><td>Ramesh Kumar</td><td>Sneha Menon</td><td>26 / 30</td><td><span class="pill p-ok"><span class="dot"></span>OK</span></td></tr>
+            <tr><td><b>R-02</b></td><td>Al Muwaiji → Hili</td><td class="mono">06:05</td><td class="mono">AUH 55910 · 15 seats</td><td>Abdul Rahman</td><td>Fatima Ali</td><td>14 / 15</td><td><span class="pill p-warn"><span class="dot"></span>Licence 7d</span></td></tr>
+            <tr class="hl"><td><b>R-03</b></td><td>Zakher → Town Centre</td><td class="mono">06:00</td><td class="mono">AUH 63044 · 45 seats</td>
+              <td style="padding:5px 10px"><div class="inp sel focus" id="a10" style="padding:6px 9px;font-size:11px">Select a driver…</div></td>
+              <td>Reena Pillai</td><td>21 / 45</td><td><span class="pill p-bad"><span class="dot"></span>Incomplete</span></td></tr>
+            <tr><td><b>R-04</b></td><td>Falaj Hazza → Asharej</td><td class="mono">06:10</td><td class="mono">AUH 20118 · 30 seats</td><td>Sunil Varghese</td><td>Mary Joseph</td><td>29 / 30</td><td><span class="pill p-info"><span class="dot"></span>Leave 22nd</span></td></tr>
+            <tr><td><b>R-05</b></td><td>Town Centre → Al Maqam</td><td class="mono">06:15</td><td class="mono">AUH 77420 · 22 seats</td><td>Nasser Hassan</td><td>Aisha Khalid</td><td>18 / 22</td><td><span class="pill p-ok"><span class="dot"></span>OK</span></td></tr>
+            <tr><td><b>R-06</b></td><td>Shiab → Al Khabisi</td><td class="mono">06:20</td><td class="mono">AUH 31866 · 45 seats</td><td>Bilal Ahmed</td><td>Nisha R.</td><td>38 / 45</td><td><span class="pill p-ok"><span class="dot"></span>OK</span></td></tr>
+          </table>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:11px;flex:none">
+          <div style="background:rgba(255,176,32,.07);border:1px solid rgba(255,176,32,.32);border-radius:10px;padding:11px 14px">
+            <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--amb);font-weight:700;margin-bottom:8px">Drivers free right now</div>
+            <div style="display:flex;gap:7px;flex-wrap:wrap">
+              <span class="pill p-ok">Joseph Mathew · cleared 45-seat</span>
+              <span class="pill p-ok">Vikram Nair · cleared 45-seat</span>
+              <span class="pill p-idle">Rafeeq M. · 15-seat only</span>
+            </div>
+            <div class="hint" style="margin-top:9px">Only drivers who are free <b style="color:var(--mut)">and</b> cleared for a 45-seat bus are offered. One click and R-03 is closed.</div>
+          </div>
+          <div style="background:#0E1828;border:1px solid var(--line2);border-radius:10px;padding:11px 14px">
+            <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-weight:700;margin-bottom:8px">The system blocks mistakes before they happen</div>
+            <div style="display:flex;flex-direction:column;gap:5px;font-size:11px;color:var(--mut)">
+              <div>🚫 Same driver on two routes at the same time</div>
+              <div>🚫 Same bus used twice in one shift</div>
+              <div>🚫 A driver whose licence has expired</div>
+              <div>🚫 More students than the bus has seats</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cap" data-for="a10" data-pos="below">Pick from the driver list — no typing, no mistakes</div>
+  </div>
+</section>
+
+<!-- ============ 11. UI: DAILY TRIP SHEET ============ -->
+<section class="slide">
+  <div class="pad" style="padding:34px 40px 14px">
+    <div class="kick">Screen 7 · Daily trips</div>
+    <h2 style="margin-top:10px;font-size:27px">Every trip recorded — so when the school asks, you have the answer.</h2>
+  </div>
+  <div class="app">
+    <aside class="side">
+      <div class="brandbox"><div class="logo">🚌</div><b>Rhino Fleet</b></div>
+      <div class="navlbl">Main</div>
+      <div class="nav"><i>▦</i>Dashboard</div>
+      <div class="nav"><i>🚌</i>Bus Master</div>
+      <div class="nav"><i>👤</i>Driver Master</div>
+      <div class="nav"><i>🗺️</i>Routes</div>
+      <div class="nav act"><i>📋</i>Daily Trips</div>
+      <div class="navlbl">Records</div>
+      <div class="nav"><i>🎓</i>Students</div>
+      <div class="nav"><i>🔔</i>Alerts</div>
+      <div class="nav"><i>📊</i>Reports</div>
+    </aside>
+    <div class="main">
+      <div class="top">
+        <div><h4>Daily Trip Sheet — Tuesday, 16 September 2026</h4><div class="sub">Morning shift · 34 routes · 31 completed · 3 running</div></div>
+        <div style="display:flex;align-items:center;gap:9px"><div class="search" style="width:118px">📅 16 Sep 2026</div><div class="btn ghost">⬇ Export</div><div class="btn">Close Day</div></div>
+      </div>
+      <div class="body">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:11px">
+          <div class="kpi"><div class="n" style="color:var(--grn)">31</div><div class="l">Trips completed</div></div>
+          <div class="kpi"><div class="n" style="color:var(--blu)">3</div><div class="l">Currently running</div></div>
+          <div class="kpi"><div class="n">742</div><div class="l">Students carried</div></div>
+          <div class="kpi"><div class="n" style="color:var(--amb)">2</div><div class="l">Late departures</div></div>
+        </div>
+        <div style="background:#0E1828;border:1px solid var(--line2);border-radius:10px;overflow:hidden;flex:1;min-height:0">
+          <table>
+            <tr><th style="width:60px">Route</th><th>Bus</th><th>Driver</th><th style="width:70px">Out</th><th style="width:70px">Arrived</th><th style="width:70px">Students</th><th>Odometer</th><th>Note</th><th>Status</th></tr>
+            <tr><td><b>R-01</b></td><td class="mono">AUH 41287</td><td>Ramesh K.</td><td class="mono">05:55</td><td class="mono">06:48</td><td>26 / 26</td><td class="mono">64,318 km</td><td style="color:var(--dim)">—</td><td><span class="pill p-ok"><span class="dot"></span>Completed</span></td></tr>
+            <tr><td><b>R-02</b></td><td class="mono">AUH 55910</td><td>Abdul R.</td><td class="mono">06:09</td><td class="mono">06:57</td><td>13 / 14</td><td class="mono">88,106 km</td><td style="color:var(--amb)">1 absent — informed</td><td><span class="pill p-ok"><span class="dot"></span>Completed</span></td></tr>
+            <tr class="hl"><td><b>R-03</b></td><td class="mono">AUH 63044</td><td>Joseph M.</td><td class="mono">06:02</td><td class="mono">—</td><td>21 / 21</td><td class="mono">—</td><td style="color:var(--blu)">On the road</td><td><span class="pill p-info"><span class="dot"></span>Running</span></td></tr>
+            <tr><td><b>R-04</b></td><td class="mono">AUH 20118</td><td>Sunil V.</td><td class="mono">06:22</td><td class="mono">07:11</td><td>29 / 29</td><td class="mono">71,904 km</td><td style="color:var(--amb)">Traffic at Zayed Rd</td><td><span class="pill p-warn"><span class="dot"></span>Late 12 min</span></td></tr>
+            <tr><td><b>R-05</b></td><td class="mono">AUH 77420</td><td>Nasser H.</td><td class="mono">06:15</td><td class="mono">06:59</td><td>18 / 18</td><td class="mono">33,441 km</td><td style="color:var(--dim)">—</td><td><span class="pill p-ok"><span class="dot"></span>Completed</span></td></tr>
+            <tr><td><b>R-06</b></td><td class="mono">AUH 31866</td><td>Bilal A.</td><td class="mono">06:20</td><td class="mono">07:04</td><td>38 / 38</td><td class="mono" id="a11">52,877 km</td><td style="color:var(--dim)">—</td><td><span class="pill p-ok"><span class="dot"></span>Completed</span></td></tr>
+          </table>
+        </div>
+        <div style="margin-top:9px;font-size:10px;color:var(--dim)">The driver taps <b style="color:var(--mut)">Start</b> and <b style="color:var(--mut)">Arrived</b> on his phone — the office sheet fills itself.</div>
+      </div>
+    </div>
+    <div class="cap blue" data-for="a11" data-pos="below">A permanent record — open any date, any route</div>
+  </div>
+</section>
+
+<!-- ============ 12. UI: ALERTS ============ -->
+<section class="slide">
+  <div class="pad" style="padding:34px 40px 14px">
+    <div class="kick">Screen 8 · Reminders</div>
+    <h2 style="margin-top:10px;font-size:27px">The system watches the dates so nobody has to remember them.</h2>
+  </div>
+  <div class="app">
+    <aside class="side">
+      <div class="brandbox"><div class="logo">🚌</div><b>Rhino Fleet</b></div>
+      <div class="navlbl">Main</div>
+      <div class="nav"><i>▦</i>Dashboard</div>
+      <div class="nav"><i>🚌</i>Bus Master</div>
+      <div class="nav"><i>👤</i>Driver Master</div>
+      <div class="nav"><i>🗺️</i>Routes</div>
+      <div class="nav"><i>📋</i>Daily Trips</div>
+      <div class="navlbl">Records</div>
+      <div class="nav"><i>🎓</i>Students</div>
+      <div class="nav act"><i>🔔</i>Alerts</div>
+      <div class="nav"><i>📊</i>Reports</div>
+    </aside>
+    <div class="main">
+      <div class="top">
+        <div><h4>Alerts &amp; Renewals</h4><div class="sub">5 urgent · 9 coming up in 60 days · sent to your email every Sunday</div></div>
+        <div style="display:flex;align-items:center;gap:9px"><div class="btn ghost">Alert Settings</div><div class="btn">Mark Handled</div></div>
+      </div>
+      <div class="body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1;min-height:0">
+          <div style="background:rgba(251,113,133,.06);border:1px solid rgba(251,113,133,.3);border-radius:10px;padding:13px 15px">
+            <div style="font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--red);font-weight:700;margin-bottom:11px">🔴 Act this week</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:9px;border-bottom:1px solid var(--line2)">
+                <div><div style="font-size:12px;color:#fff;font-weight:600">Abdul Rahman — Driving Licence</div><div style="font-size:10px;color:var(--dim);margin-top:2px">DRV-02 · Licence 8842190 · currently on R-02</div></div>
+                <span class="pill p-bad">7 days</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:9px;border-bottom:1px solid var(--line2)">
+                <div><div style="font-size:12px;color:#fff;font-weight:600">AUH 63044 — Insurance</div><div style="font-size:10px;color:var(--dim);margin-top:2px">BUS-003 · King Long 45-seat · Policy MOT-7719</div></div>
+                <span class="pill p-bad">12 days</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:9px;border-bottom:1px solid var(--line2)">
+                <div><div style="font-size:12px;color:#fff;font-weight:600">AUH 90233 — Registration (Mulkiya)</div><div style="font-size:10px;color:var(--dim);margin-top:2px">BUS-007 · Toyota Hiace 2022</div></div>
+                <span class="pill p-bad">18 days</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div><div style="font-size:12px;color:#fff;font-weight:600">AUH 20118 — Service overdue</div><div style="font-size:10px;color:var(--dim);margin-top:2px">5,120 km past the service interval</div></div>
+                <span class="pill p-bad">Overdue</span></div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="background:#0E1828;border:1px solid var(--line2);border-radius:10px;padding:13px 15px">
+              <div style="font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--amb);font-weight:700;margin-bottom:11px">🟡 Coming up — next 60 days</div>
+              <div style="display:flex;flex-direction:column;gap:8px;font-size:11.5px">
+                <div style="display:flex;justify-content:space-between"><span style="color:#DCE7F7">Imran Sheikh — Visa renewal</span><span class="pill p-warn">18 Nov</span></div>
+                <div style="display:flex;justify-content:space-between"><span style="color:#DCE7F7">Ramesh Kumar — Medical fitness</span><span class="pill p-warn">27 Oct</span></div>
+                <div style="display:flex;justify-content:space-between"><span style="color:#DCE7F7">AUH 31866 — Insurance</span><span class="pill p-warn">11 Nov</span></div>
+                <div style="display:flex;justify-content:space-between"><span style="color:#DCE7F7">AUH 41287 — Service due (8,000 km)</span><span class="pill p-warn">~ 02 Nov</span></div>
+                <div style="display:flex;justify-content:space-between"><span style="color:#DCE7F7">Bus attendant training refresh</span><span class="pill p-warn">30 Nov</span></div>
+              </div>
+            </div>
+            <div style="background:#0E1828;border:1px solid var(--line2);border-radius:10px;padding:13px 15px;flex:1">
+              <div style="font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--blu);font-weight:700;margin-bottom:11px">Who gets told, and when</div>
+              <div style="display:flex;flex-direction:column;gap:8px;font-size:11.5px;color:var(--mut)">
+                <div>📧 <b style="color:#DCE7F7">Email to the office</b> — 60, 30 and 7 days before</div>
+                <div>🔔 <b style="color:#DCE7F7">On the dashboard</b> — until someone marks it handled</div>
+                <div>📱 <b style="color:#DCE7F7">SMS / WhatsApp</b> — optional, for the urgent ones</div>
+                <div>🚫 <b style="color:#DCE7F7">Auto-block</b> — an expired driver cannot be put on a route</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 13. UI: REPORTS + MOBILE ============ -->
+<section class="slide">
+  <div class="pad" style="padding:34px 40px 14px">
+    <div class="kick">Screen 9 · Reports &amp; the driver's phone</div>
+    <h2 style="margin-top:10px;font-size:27px">Answers for you. A simple screen for the driver.</h2>
+  </div>
+  <div class="app">
+    <div class="main">
+      <div class="top">
+        <div><h4>Reports</h4><div class="sub">Any report exports to Excel or PDF in one click</div></div>
+        <div style="display:flex;align-items:center;gap:9px"><div class="search" style="width:128px">📅 This month ▾</div><div class="btn">⬇ Download</div></div>
+      </div>
+      <div class="body" style="flex-direction:row;gap:16px">
+        <div style="flex:1;display:flex;flex-direction:column;gap:11px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div class="kpi"><div class="n">98.4<span style="font-size:14px">%</span></div><div class="l">Trips on time</div></div>
+            <div class="kpi"><div class="n">14,220<span style="font-size:13px"> km</span></div><div class="l">Distance this month</div></div>
+            <div class="kpi"><div class="n">AED 41.2k</div><div class="l">Fuel &amp; maintenance</div></div>
+            <div class="kpi"><div class="n">0</div><div class="l">Expired documents</div></div>
+          </div>
+          <div style="background:#0E1828;border:1px solid var(--line2);border-radius:10px;padding:13px 15px;flex:1">
+            <div style="font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--amb);font-weight:700;margin-bottom:11px">Reports you can pull anytime</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11.5px;color:var(--mut)">
+              <div>📄 Bus list with chassis numbers</div>
+              <div>📄 Driver list with document expiry</div>
+              <div>📄 Route sheet per school</div>
+              <div>📄 Trip history by date or route</div>
+              <div>📄 Driver duty &amp; attendance summary</div>
+              <div>📄 Bus utilisation — idle vs running</div>
+              <div>📄 Fuel &amp; service cost per bus</div>
+              <div>📄 Late departure analysis</div>
+            </div>
+            <div class="hint" style="margin-top:12px">Every one of these is a question someone asks you today. Now it's a button.</div>
+          </div>
+        </div>
+
+        <div style="width:206px;flex:none;display:flex;flex-direction:column;align-items:center">
+          <div style="width:190px;border:7px solid #1B2941;border-radius:24px;background:#0B1320;overflow:hidden;box-shadow:0 18px 44px rgba(0,0,0,.5)">
+            <div style="background:#0F1A2C;padding:9px 12px;border-bottom:1px solid var(--line2)">
+              <div style="font-size:9px;color:var(--dim)">Tue 16 Sep · 05:52</div>
+              <div style="font-size:12px;font-weight:700;margin-top:2px">Good morning, Ramesh</div>
+            </div>
+            <div style="padding:10px 11px;display:flex;flex-direction:column;gap:8px">
+              <div style="background:rgba(255,176,32,.1);border:1px solid rgba(255,176,32,.3);border-radius:9px;padding:9px">
+                <div style="font-size:9px;color:var(--amb);letter-spacing:.1em;font-weight:700">TODAY'S ROUTE</div>
+                <div style="font-size:12px;font-weight:700;margin-top:4px">R-01 · Al Jimi</div>
+                <div class="mono" style="font-size:9.5px;color:var(--mut);margin-top:3px">Bus AUH 41287 · 26 students</div>
+              </div>
+              <div style="background:#0E1828;border:1px solid var(--line2);border-radius:9px;padding:8px">
+                <div style="font-size:9px;color:var(--dim)">STOP 1 · 05:55</div><div style="font-size:11px;margin-top:2px">Jimi Mall gate · 6 students</div>
+              </div>
+              <div style="background:#0E1828;border:1px solid var(--line2);border-radius:9px;padding:8px">
+                <div style="font-size:9px;color:var(--dim)">STOP 2 · 06:04</div><div style="font-size:11px;margin-top:2px">Sanaiya Street 12 · 9 students</div>
+              </div>
+              <div style="background:var(--amb);color:#20160A;border-radius:9px;padding:9px;text-align:center;font-size:12px;font-weight:800">▶ Start Trip</div>
+              <div style="font-size:8.5px;color:var(--dim);text-align:center;line-height:1.5">Two buttons only: Start and Arrived.<br>Works in English or Arabic.</div>
+            </div>
+          </div>
+          <div style="font-size:9.5px;color:var(--dim);margin-top:11px;text-align:center;line-height:1.5">Optional — the office<br>works fine without it</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 14. BEFORE / AFTER ============ -->
+<section class="slide">
+  <div class="pad" style="flex:1;display:flex;flex-direction:column">
+    <div class="rise kick">What actually changes</div>
+    <h2 class="rise" style="margin-top:14px;max-width:820px">Same team, same buses. Different day.</h2>
+    <div class="rise" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:26px;flex:1">
+      <div class="card" style="display:flex;flex-direction:column">
+        <div class="pill p-idle" style="align-self:flex-start;margin-bottom:14px">TODAY</div>
+        <div style="display:flex;flex-direction:column;gap:12px;font-size:14px;color:var(--mut);flex:1;justify-content:space-evenly">
+          <div>🕕 Supervisor calls three people to find out who is driving R-03.</div>
+          <div>📑 Chassis number needed for insurance — someone digs through files.</div>
+          <div>😬 A licence expires and you find out from the traffic police.</div>
+          <div>🤷 School asks about last Tuesday — you promise to "check and revert".</div>
+          <div>🔑 One supervisor knows everything. He goes on leave, you feel it.</div>
+          <div>📊 Month-end reporting is a full day of typing.</div>
+        </div>
+      </div>
+      <div class="card" style="border-color:rgba(52,211,153,.35);background:rgba(52,211,153,.05);display:flex;flex-direction:column">
+        <div class="pill p-ok" style="align-self:flex-start;margin-bottom:14px"><span class="dot"></span>WITH THE SYSTEM</div>
+        <div style="display:flex;flex-direction:column;gap:12px;font-size:14px;color:#C9E1D8;flex:1;justify-content:space-evenly">
+          <div>⚡ R-03 is filled in 20 seconds from the list of free, cleared drivers.</div>
+          <div>🔎 Chassis number found by searching half of it. Two seconds.</div>
+          <div>🔔 You knew 60 days ago. The renewal was done in week one.</div>
+          <div>✅ Last Tuesday's trip opens on screen while you're still on the call.</div>
+          <div>👥 Anyone in the office can run the morning. The system holds the knowledge.</div>
+          <div>📥 Month-end is a download.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>BEFORE &amp; AFTER</span><span>14</span></div>
+</section>
+
+<!-- ============ 15. ROLLOUT ============ -->
+<section class="slide">
+  <div class="pad" style="flex:1;display:flex;flex-direction:column;justify-content:center">
+    <div class="rise kick">How we get you there</div>
+    <h2 class="rise" style="margin-top:14px;max-width:820px">Live in weeks, not months — and your team is never left guessing.</h2>
+    <div class="rise" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:32px">
+      <div class="card">
+        <div style="font-size:11px;letter-spacing:.14em;color:var(--amb);font-weight:700">WEEK 1</div>
+        <h3 style="margin-top:10px">Sit with your team</h3>
+        <p style="font-size:13px;margin-top:8px">We watch how the morning actually runs, and agree exactly which fields matter to you. Nothing extra.</p>
+      </div>
+      <div class="card">
+        <div style="font-size:11px;letter-spacing:.14em;color:var(--amb);font-weight:700">WEEK 2–3</div>
+        <h3 style="margin-top:10px">Build &amp; load your data</h3>
+        <p style="font-size:13px;margin-top:8px">We set up the system and import your existing bus and driver sheets. You start with real data, not a blank screen.</p>
+      </div>
+      <div class="card">
+        <div style="font-size:11px;letter-spacing:.14em;color:var(--amb);font-weight:700">WEEK 4</div>
+        <h3 style="margin-top:10px">Train &amp; go live</h3>
+        <p style="font-size:13px;margin-top:8px">Half a day of training. We run the first week beside your supervisor until he's comfortable.</p>
+      </div>
+      <div class="card" style="border-color:rgba(255,176,32,.4);background:rgba(255,176,32,.05)">
+        <div style="font-size:11px;letter-spacing:.14em;color:var(--amb);font-weight:700">ONGOING</div>
+        <h3 style="margin-top:10px">We stay on the line</h3>
+        <p style="font-size:13px;margin-top:8px">Support, small changes as you grow, and new features when you need them. You are not left alone after go-live.</p>
+      </div>
+    </div>
+    <div class="rise" style="margin-top:30px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+      <div style="padding:16px 20px;background:rgba(255,255,255,.03);border:1px solid var(--line2);border-radius:12px">
+        <div style="font-size:13px;font-weight:700;color:#fff">No new hardware</div><p style="font-size:12.5px;margin-top:4px">Runs on the laptops and phones you already have.</p>
+      </div>
+      <div style="padding:16px 20px;background:rgba(255,255,255,.03);border:1px solid var(--line2);border-radius:12px">
+        <div style="font-size:13px;font-weight:700;color:#fff">Start with what you need</div><p style="font-size:12.5px;margin-top:4px">Buses, drivers and routes first. Students, GPS and parents later if you want them.</p>
+      </div>
+      <div style="padding:16px 20px;background:rgba(255,255,255,.03);border:1px solid var(--line2);border-radius:12px">
+        <div style="font-size:13px;font-weight:700;color:#fff">Your data stays yours</div><p style="font-size:12.5px;margin-top:4px">Export everything to Excel any day you like.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>ROLLOUT PLAN</span><span>15</span></div>
+</section>
+
+<!-- ============ 16. CLOSE ============ -->
+<section class="slide">
+  <div class="glow" style="width:620px;height:620px;background:rgba(255,176,32,.15);bottom:-260px;left:-140px"></div>
+  <div class="glow" style="width:440px;height:440px;background:rgba(96,165,250,.12);top:-180px;right:-100px"></div>
+  <div class="pad" style="flex:1;display:flex;flex-direction:column;justify-content:center;position:relative">
+    <div class="rise kick">Where we go from here</div>
+    <h1 class="rise" style="margin-top:22px;font-size:46px;max-width:860px">Let's build the first version<br>around <span style="color:var(--amb)">your</span> routes.</h1>
+    <p class="rise lead" style="margin-top:20px;max-width:640px">
+      Send us one of your current bus sheets and one driver sheet. We'll load your real data into the screens
+      you just saw and show it back to you — so you're deciding on your own operation, not on a demo.
+    </p>
+    <div class="rise" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:36px;max-width:860px">
+      <div class="card" style="padding:18px">
+        <div style="font-size:11px;letter-spacing:.14em;color:var(--amb);font-weight:700">STEP 1</div>
+        <h3 style="margin-top:9px;font-size:16px">Share your sheets</h3><p style="font-size:12.5px;margin-top:5px">Buses and drivers, in whatever format you have them.</p>
+      </div>
+      <div class="card" style="padding:18px">
+        <div style="font-size:11px;letter-spacing:.14em;color:var(--amb);font-weight:700">STEP 2</div>
+        <h3 style="margin-top:9px;font-size:16px">See it with your data</h3><p style="font-size:12.5px;margin-top:5px">A working demo with your buses and your drivers in it.</p>
+      </div>
+      <div class="card" style="padding:18px;border-color:rgba(255,176,32,.4);background:rgba(255,176,32,.05)">
+        <div style="font-size:11px;letter-spacing:.14em;color:var(--amb);font-weight:700">STEP 3</div>
+        <h3 style="margin-top:9px;font-size:16px">Approve &amp; go live</h3><p style="font-size:12.5px;margin-top:5px">Four weeks from your go-ahead to a working morning.</p>
+      </div>
+    </div>
+    <div class="rise" style="margin-top:38px;display:flex;align-items:center;gap:16px">
+      <div style="font-size:19px;font-weight:700;color:#fff">Thank you, Rhino.</div>
+      <div style="height:16px;width:1px;background:var(--line)"></div>
+      <div style="font-size:13px;color:var(--mut)">Questions are welcome — that's the best part of the meeting.</div>
+    </div>
+  </div>
+  <div class="foot"><span>NEXT STEPS</span><span>16</span></div>
+</section>
+
+</div>
+
+<div id="hud">
+  <button id="prev" title="Previous">‹</button>
+  <div id="dots"></div>
+  <span id="num">1 / 16</span>
+  <button id="next" title="Next">›</button>
+</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var stage  = document.getElementById('stage');
+  var dots   = document.getElementById('dots');
+  var num    = document.getElementById('num');
+  var i = 0;
+
+  slides.forEach(function(_, idx){
+    var d = document.createElement('span');
+    d.addEventListener('click', function(){ go(idx); });
+    dots.appendChild(d);
+  });
+  var dotEls = Array.prototype.slice.call(dots.children);
+
+  function go(n){
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach(function(s, idx){ s.classList.toggle('on', idx === i); });
+    dotEls.forEach(function(d, idx){ d.classList.toggle('on', idx === i); });
+    num.textContent = (i + 1) + ' / ' + slides.length;
+  }
+
+  function fit(){
+    var s = Math.min(window.innerWidth / 1280, (window.innerHeight - 64) / 720);
+    stage.style.transform = 'scale(' + s + ')';
+  }
+
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); go(i + 1); }
+    if (e.key === 'ArrowLeft'  || e.key === 'PageUp')                    { e.preventDefault(); go(i - 1); }
+    if (e.key === 'Home') go(0);
+    if (e.key === 'End')  go(slides.length - 1);
+    if (e.key === 'f' || e.key === 'F') {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else document.documentElement.requestFullscreen();
+    }
+  });
+  document.getElementById('next').addEventListener('click', function(){ go(i + 1); });
+  document.getElementById('prev').addEventListener('click', function(){ go(i - 1); });
+  stage.addEventListener('click', function(e){
+    if (e.clientX > window.innerWidth * 0.62) go(i + 1);
+    else if (e.clientX < window.innerWidth * 0.38) go(i - 1);
+  });
+
+  var x0 = null;
+  document.addEventListener('touchstart', function(e){ x0 = e.touches[0].clientX; });
+  document.addEventListener('touchend', function(e){
+    if (x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 50) go(i + (dx < 0 ? 1 : -1));
+    x0 = null;
+  });
+
+  function placeCaps(){
+    document.querySelectorAll('.cap[data-for]').forEach(function(c){
+      var t = document.getElementById(c.getAttribute('data-for'));
+      var host = c.offsetParent;
+      if (!t || !host) return;
+      var hr = host.getBoundingClientRect();
+      var k  = hr.width / host.offsetWidth || 1;
+      var tr = t.getBoundingClientRect(), cr = c.getBoundingClientRect();
+      var tx = (tr.left - hr.left)/k, ty = (tr.top - hr.top)/k;
+      var tw = tr.width/k, th = tr.height/k;
+      var cw = cr.width/k,  ch = cr.height/k;
+      var pos = c.getAttribute('data-pos'), L, T, arrow;
+      if (pos === 'left')       { L = tx - cw - 14;      T = ty + th/2 - ch/2; arrow = 'rt'; }
+      else if (pos === 'right') { L = tx + tw + 14;      T = ty + th/2 - ch/2; arrow = 'lf'; }
+      else if (pos === 'above') { L = tx + tw/2 - 18;    T = ty - ch - 12;     arrow = 'dn'; }
+      else                      { L = tx + tw/2 - 18;    T = ty + th + 12;     arrow = 'up'; }
+      L = Math.max(10, Math.min(L, host.offsetWidth  - cw - 10));
+      T = Math.max(10, Math.min(T, host.offsetHeight - ch - 10));
+      c.classList.add(arrow);
+      c.style.left = L + 'px';
+      c.style.top  = T + 'px';
+    });
+  }
+
+  window.addEventListener('resize', fit);
+  fit(); go(0);
+  placeCaps();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(placeCaps);
+})();
+</script>
+</body>
+</html>
